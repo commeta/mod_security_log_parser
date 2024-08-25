@@ -5,6 +5,9 @@
 
 [ModSecurity Handbook: Getting Started: Chapter 4. Logging](https://www.feistyduck.com/library/modsecurity-handbook-free/online/ch04-logging.html)
 
+[owasp-modsecurity / ModSecurity Reference Manual (v2.x)](https://github.com/owasp-modsecurity/ModSecurity/wiki/Reference-Manual-(v2.x))
+
+
 ### Основные функции и задачи скрипта:
 
 1. Чтение логов: Скрипт просматривает указанный каталог (/var/log/httpd/modsec_audit/) на наличие файлов логов, созданных модулем ModSecurity, и обрабатывает их.
