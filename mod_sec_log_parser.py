@@ -5,7 +5,6 @@ import re
 import pymysql
 from pymysql import MySQLError
 from datetime import datetime
-import chardet
 
 WATCH_DIR = "/var/log/httpd/modsec_audit/"
 MERGED_LOG_FILE = "/var/log/httpd/modsec_audit.log"
