@@ -28,12 +28,12 @@ from pymysql import MySQLError
 from datetime import datetime
 
 WATCH_DIR = "/var/log/httpd/modsec_audit/"
-MERGED_LOG_FILE = "/var/log/httpd/modsec_audit.log"
+MERGED_LOG_FILE = "/var/log/httpd/modsec_merged.log"
 
 regex_patterns = {
     'REQUEST_METHOD': re.compile(r'--[0-9a-f]+-B--\n([A-Z]+) '),
     'REQUEST_URI': re.compile(r'--[0-9a-f]+-B--\n[A-Z]+ (.+?) '),
-    'REMOTE_ADDR': re.compile(r'--[0-9a-f]+-A--\n.*? ([\d\.]+) '),
+    'REMOTE_ADDR': re.compile(r'--[0-9a-f]+-A--\n.*? ((?:[\d\.]+|[0-9a-fA-F:]+)) '), 
     'Host': re.compile(r'Host: (.+)'),
     'User-Agent': re.compile(r'User-Agent: (.+)'),
     'ruleId': re.compile(r'\[id "(\d+)"\]'),
@@ -85,8 +85,22 @@ def connect_to_db():
         print(f"Error while connecting to MySQL: {e}")
         return None
 
+def sanitize_string(s):
+    return re.sub(r'[^\w\s./-~!*\(\);:@&=+$,\'%]', '', s)
+
+def validate_data(data):
+    for key in data:
+        if isinstance(data[key], str):
+            data[key] = sanitize_string(data[key])
+    
+    return data
+
 def insert_into_db(connection, data):
     cursor = connection.cursor()
+    
+    # Валидация данных перед вставкой
+    data = validate_data(data)
+        
     insert_query = """
     INSERT INTO logs (REQUEST_METHOD, REQUEST_URI, REMOTE_ADDR, ruleId, Host, msg, data, unique_id, severity, maturity, accuracy, User_Agent, responce_header, Engine_Mode, created_at)
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
