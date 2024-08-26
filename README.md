@@ -1,9 +1,11 @@
-# Apache mod security log parser
+# Apache ModSecurity Log Parser
 
-## Описание скрипта mod_sec_log_parser.py
-Этот скрипт предназначен для обработки и анализа логов, созданных модулем ModSecurity на веб-сервере Apache в режиме SecAuditLogType Concurrent. Он автоматически извлекает ключевые данные из логов, хранящихся в виде отдельных мелких файлов, объединяет их в один лог-файл и записывает информацию в базу данных MySQL для удобного анализа и отчётности. Скрипт также осуществляет очистку обработанных файлов и пустых директорий, поддерживая организованную файловую структуру.
+[На Русском](README_RU.md)
 
-Скрипты решают проблемы с использованием глобального мьютекста с модулем Apache2 MPM ITK [issues/454](https://github.com/owasp-modsecurity/ModSecurity/issues/454), [issues/712](https://github.com/owasp-modsecurity/ModSecurity/issues/712)
+## Description of the mod_sec_log_parser.py Script
+This script is designed to process and analyze logs created by the ModSecurity module on an Apache web server in Concurrent SecAuditLogType mode. It automatically extracts key data from the logs, which are stored as separate small files, combines them into a single log file, and records the information in a MySQL database for convenient analysis and reporting. The script also cleans up processed files and empty directories, maintaining an organized file structure.
+
+The scripts address issues related to using global mutexes with the Apache2 MPM ITK module. [issues/454](https://github.com/owasp-modsecurity/ModSecurity/issues/454), [issues/712](https://github.com/owasp-modsecurity/ModSecurity/issues/712)
 
 
 
@@ -12,79 +14,76 @@
 [owasp-modsecurity / ModSecurity Reference Manual (v2.x)](https://github.com/owasp-modsecurity/ModSecurity/wiki/Reference-Manual-(v2.x))
 
 
-### Основные функции и задачи скрипта:
+### Key Functions and Tasks of the Script:
 
-1. Чтение логов: Скрипт просматривает указанный каталог (/var/log/httpd/modsec_audit/) на наличие файлов логов, созданных модулем ModSecurity, и обрабатывает их.
+1. **Log Reading**: The script scans the specified directory (/var/log/httpd/modsec_audit/) for log files created by the ModSecurity module and processes them.
 
-2. Парсинг данных: Логи разбиваются на ключевые компоненты с использованием заранее определенных регулярных выражений, чтобы извлечь важные данные, такие как метод запроса, URI, адрес клиента, идентификатор правила, сообщения об ошибках и другие сведения, касающиеся запросов.
+2. **Data Parsing**: Logs are broken down into key components using predefined regular expressions to extract important data such as request method, URI, client address, rule ID, error messages, and other request-related information.
 
-3. Объединение логов: Все обработанные данные записываются в один общий лог-файл (/var/log/httpd/modsec_audit.log) для удобства хранения и последующего анализа.
+3. **Log Merging**: All processed data is written to a single consolidated log file (/var/log/httpd/modsec_audit.log) for easier storage and subsequent analysis.
 
-4. Подключение к базе данных: Скрипт осуществляет соединение с базой данных MySQL для сохранения извлеченных данных в таблице logs. Это позволяет упростить анализ и отчетность о проблемах, обнаруженных ModSecurity.
+4. **Database Connection**: The script connects to a MySQL database to save the extracted data in the logs table. This simplifies analysis and reporting on issues detected by ModSecurity.
 
-5. Запись данных в базу: Извлеченные данные регистрируются в таблице базы данных с фиксированной структурой, что позволяет пользователю отслеживать информацию о безопасности в режиме реального времени.
+5. **Data Recording in Database**: Extracted data is recorded in a fixed-structure database table, allowing users to track security information in real-time.
 
-6. Очистка файлов и директорий: После успешной обработки логов, скрипт удаляет их, чтобы избежать повторной обработки при следующем запуске. Также происходит проверка и удаление пустых подкаталогов, что позволяет поддерживать чистую и организованную файловую структуру.
+6. **File and Directory Cleanup**: After successful log processing, the script deletes the logs to avoid reprocessing during the next run. It also checks for and removes empty subdirectories, helping to maintain a clean and organized file structure.
 
-### Принципы работы
+### Principles of Operation
 
-- Регулярные выражения: Для парсинга логов используются регулярные выражения, которые четко определяют, каковы формы данных, которые нужно искать, обеспечивая точное извлечение информации.
+- **Regular Expressions**: Regular expressions are used for parsing logs, clearly defining the data formats to search for, ensuring accurate information extraction.
 
-- Работа с исключениями: Скрипт учитывает возможные ошибки при подключении к базе данных и читает файлы логов, обеспечивая обработку сбоев без остановки выполнения всей программы.
+- **Exception Handling**: The script accounts for possible errors when connecting to the database and reading log files, allowing it to handle failures without stopping the entire program.
 
-- Структура данных: Каждая запись в базе данных содержит важные поля, связанные с обработанным логом, включая метод запроса, URI, IP-адрес клиента, уникальный идентификатор ошибки ModSecurity и другие параметры.
+- **Data Structure**: Each record in the database contains important fields related to the processed log, including the request method, URI, client IP address, unique ModSecurity error ID, and other parameters.
 
-### Зависимости
+### Dependencies
 
-Скрипт требует библиотеку pymysql для взаимодействия с базой данных MySQL. Убедитесь, что она установлена в вашем окружении:
+The script requires the pymysql library to interact with the MySQL database. Make sure it is installed in your environment:
 
 `pip install pymysql`
 
 
-### Настройки
+### Settings
 
-Перед запуском скрипта убедитесь, что:
+Before running the script, ensure that:
+- The database connection settings (default is localhost) are correct, and the user has the appropriate permissions to access the modsec_logs database.
+- The encoding of the log files (the script uses latin-1) matches the actual encoding. If you are working with logs of a different encoding, make sure it is specified correctly.
 
-- Настройки подключения к базе данных (по умолчанию localhost) правильные, и пользователь имеет соответствующие права доступа к базе modsec_logs.
-- Кодировка файла логов (в скрипте используется latin-1) соответствует фактической кодировке. Если вы работаете с логами другой кодировки, убедитесь, что она правильно указана.
+### Description of ModSecurity Audit Log Fields Extracted by the Script:
 
+1. **REQUEST_METHOD** - The HTTP request method (e.g., GET, POST, PUT, DELETE).
 
+2. **REQUEST_URI** - The URL of the request processed by the web server.
 
-### Описание значений полей лог-файла ModSecurity Audit Log, которые извлекаются скриптом:
+3. **REMOTE_ADDR** - The IP address of the client that sent the request.
 
-1. REQUEST_METHOD - HTTP-метод запроса (например, GET, POST, PUT, DELETE).
+4. **Host** - The host name specified in the Host header of the request.
 
-2. REQUEST_URI - URL-адрес запроса, который был обработан веб-сервером.
+5. **User-Agent** - The user agent string that identifies the client's browser or device.
 
-3. REMOTE_ADDR - IP-адрес клиента, который отправил запрос.
+6. **ruleId** - The identifier of the ModSecurity rule that triggered for this request.
 
-4. Host - Имя хоста, указанное в заголовке Host запроса.
+7. **msg** - A message from ModSecurity describing why the rule was triggered.
 
-5. User-Agent - Строка агента пользователя, которая идентифицирует браузер или другое устройство клиента.
+8. **data** - Data detected by ModSecurity that led to the rule being triggered. This could be part of a URL, a header, or the body of the request.
 
-6. ruleId - Идентификатор правила ModSecurity, которое сработало для этого запроса.
+9. **unique_id** - A unique identifier for the request that allows tracking its processing in the logs.
 
-7. msg - Сообщение от ModSecurity, которое описывает, почему правило сработало.
+10. **severity** - The severity level of the ModSecurity rule trigger. It can be INFO, WARNING, or ERROR.
 
-8. data - Данные, которые были обнаружены ModSecurity и привели к срабатыванию правила. Например, это может быть часть URL, заголовок или тело запроса.
+11. **maturity** - An assessment of the maturity of the ModSecurity rule. Usually, a scale from 0 to 5 is used, where 0 is the lowest maturity level and 5 is the highest.
 
-9. unique_id - Уникальный идентификатор запроса, который позволяет отслеживать его обработку в логах.
+12. **accuracy** - An assessment of the accuracy of the ModSecurity rule. Typically, a scale from 0 to 5 is used, where 0 is the lowest accuracy and 5 is the highest.
 
-10. severity - Уровень серьезности срабатывания правила ModSecurity. Может быть INFO, WARNING или ERROR.
+13. **responce_header** - The HTTP response header sent to the client.
 
-11. maturity - Оценка зрелости правила ModSecurity. Обычно используется шкала от 0 до 5, где 0 - самый низкий уровень зрелости, а 5 - самый высокий.
+14. **Engine-Mode** - The mode in which ModSecurity operated while processing the request.
 
-12. accuracy - Оценка точности правила ModSecurity. Обычно используется шкала от 0 до 5, где 0 - самый низкий уровень точности, а 5 - самый высокий.
+15. **apache_error** - An Apache error that occurred while processing the request.
 
-13. responce_header - Заголовок ответа HTTP, который был отправлен клиенту.
+16. **created_at** - The date and time when the ModSecurity rule was triggered in ISO 8601 format.
 
-14. Engine-Mode - Режим, в котором работал ModSecurity при обработке запроса.
-
-15. apache_error - Ошибка Apache, которая произошла при обработке запроса.
-
-16. created_at - Дата и время срабатывания правила ModSecurity в формате ISO 8601.
-
-#### Пример лога ModSecurity:
+#### Example ModSecurity Log:
 ```
 --f3c9d4c6-B--
 GET /some/resource HTTP/1.1
@@ -97,7 +96,7 @@ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 HTTP/1.1 403 Forbidden
 ```
 
-##### В этом примере:
+##### In this example:
 
 - REQUEST_METHOD - GET
 - REQUEST_URI - /some/resource
@@ -108,62 +107,60 @@ HTTP/1.1 403 Forbidden
 - severity - WARNING
 - responce_header - HTTP/1.1 403 Forbidden
 
-##### Важно:
+##### Important:
 
-- Точные поля, которые будут записываться в лог, могут варьироваться в зависимости от конфигурации ModSecurity и версии Apache.
-- Обратите внимание на ошибки Apache-Error, так как они могут указать на проблемы с конфигурацией Apache или ModSecurity.
-- Используйте эти данные для анализа и отладки безопасности вашего веб-приложения.
+- The exact fields that will be logged may vary depending on the ModSecurity configuration and the version of Apache.
+- Pay attention to Apache-Error messages, as they may indicate issues with the Apache or ModSecurity configuration.
+- Use this data for analyzing and debugging the security of your web application.
 
+## Description of the Mutex Parameter in Apache Configuration
 
+The Mutex parameter in Apache configuration is used to manage access to resources in a multithreaded environment. It helps avoid race conditions and ensures safe access to shared resources among different processes or threads.
 
-## Описание параметра Mutex в конфигурации Apache
-
-Параметр Mutex в конфигурации Apache используется для управления доступом к ресурсам в многопоточной среде. Он позволяет избежать состояний гонки (race conditions) и обеспечивает безопасный доступ к общим ресурсам между разными процессами или потоками.
-
-### Синтаксис
+### Syntax
 `Mutex file:/var/run/mod_security default`
 
-Строка указывает на использование файлового мьютекса, который будет храниться в директории /var/run/mod_security/. Важно, чтобы эта директория существовала и имела правильные права доступа, так как она будет использоваться для создания файла мьютекса.
+This line specifies the use of a file mutex, which will be stored in the directory /var/run/mod_security/. It is important that this directory exists and has the correct permissions, as it will be used to create the mutex file.
 
-### Права доступа
-Так как мьютекс является глобальным ресурсом, каталог, в котором создается файл мьютекса, должен иметь права доступа, позволяющие всем необходимым процессам (например, веб-серверу и модулям) взаимодействовать с ним. Это означает, что права на каталог должны быть установлены так, чтобы все пользователи, которым необходимо использовать этот мьютекс, могли его читать, записывать и выполнять поиск.
+### Permissions
+Since the mutex is a global resource, the directory where the mutex file is created must have permissions that allow all necessary processes (such as the web server and modules) to interact with it. This means that the permissions on the directory should be set so that all users who need to use this mutex can read, write, and search.
 
-Пример команды для установки прав:
+Example command to set permissions:
 ```
 chmod 770 /var/run/mod_security
 chown <owner>:<group> /var/run/mod_security
 ```
 
-Замените <owner> и <group> на соответствующие значения для вашего окружения. В данном примере каталог с мьютексом должен быть доступен для чтения, записи и поиска для владельца и группы, в которой состоят пользователи Apache 2, назначенные через AssignUserId в MPM ITK.
+Replace <owner> and <group> with the appropriate values for your environment. In this example, the directory for the mutex must be accessible for reading, writing, and searching for the owner and group to which the Apache 2 users belong, as assigned via AssignUserId in MPM ITK.
 
-### Как работает Mutex
-1. **Создание мьютекса:** При старте Apache модуль ModSecurity создает файл мьютекса в указанной директории. Этот файл служит индикатором того, что ресурс занят.
-2. **Блокировка ресурсов:** Когда один из процессов или потоков пытается получить доступ к ресурсу (например, к конфигурации правил ModSecurity), он обращается к этому мьютексу. Если другой процесс уже использует этот ресурс, текущий процесс будет заблокирован до тех пор, пока ресурс не станет доступным.
-3. **Освобождение мьютекса:** После завершения работы с ресурсом процесс освобождает мьютекс, позволяя другим процессам продолжать выполнение.
+### How Mutex Works
+1. **Creating the Mutex**: Upon starting Apache, the ModSecurity module creates a mutex file in the specified directory. This file serves as an indicator that the resource is occupied.
+2. **Locking Resources**: When one of the processes or threads attempts to access a resource (e.g., ModSecurity rule configuration), it refers to this mutex. If another process is already using this resource, the current process will be blocked until the resource becomes available.
+3. **Releasing the Mutex**: After finishing work with the resource, the process releases the mutex, allowing other processes to continue execution.
 
-### Участие в логах ModSecurity
-Мьютекс также играет важную роль в работе с логами ModSecurity:
-- **Синхронизация записей:** Когда несколько процессов Apache обрабатывают запросы одновременно, они могут пытаться записать логи в один и тот же файл. Мьютекс обеспечивает синхронизацию этих операций, предотвращая повреждение данных в логах из-за одновременной записи.
-- **Предотвращение конфликтов:** Без использования мьютекса возможны ситуации, когда один процесс может перезаписать данные, которые другой процесс пытается записать, что приводит к потерям информации или некорректным записям.
+### Involvement in ModSecurity Logs
+The mutex also plays an important role in handling ModSecurity logs:
+- **Synchronizing Entries**: When multiple Apache processes handle requests simultaneously, they may attempt to write logs to the same file. The mutex ensures synchronization of these operations, preventing data corruption in logs due to concurrent writing.
+- **Preventing Conflicts**: Without using a mutex, situations may arise where one process can overwrite data that another process is trying to write, leading to information loss or incorrect entries.
 
-Таким образом, использование параметра Mutex в конфигурации Apache для ModSecurity помогает обеспечить стабильность и целостность работы сервера в многопоточной среде, а также корректность ведения логов.
+Thus, using the Mutex parameter in Apache configuration for ModSecurity helps ensure stability and integrity of server operation in a multithreaded environment, as well as correctness in log management.
 
 
-## Описание скрипта watch_dir.sh
+## Description of the watch_dir.sh Script
 
-Этот скрипт предназначен для мониторинга и управления правами доступа к директориям, где хранятся логи, создаваемые модулем ModSecurity на веб-сервере Apache. В режиме SecAuditLogType Concurrent модуль ModSecurity создает лог-файлы с правами, установленными пользователем, назначенным процессу Apache 2 через директиву AssignUserId с модулем MPM ITK. 
+This script is designed to monitor and manage access permissions for directories where logs created by the ModSecurity module on the Apache web server are stored. In Concurrent SecAuditLogType mode, the ModSecurity module creates log files with permissions set by the user assigned to the Apache 2 process through the AssignUserId directive using the MPM ITK module.
 
-### Основные функции скрипта:
+### Key Functions of the Script:
 
-- Мониторинг директории: Скрипт использует inotifywait для постоянного отслеживания в указанной директории (/var/log/httpd/modsec_audit/) на наличие новых файлов или подкаталогов.
+- **Directory Monitoring**: The script uses inotifywait to continuously monitor the specified directory (/var/log/httpd/modsec_audit/) for new files or subdirectories.
 
-- Обработка новых подкаталогов: При создании нового подкаталога скрипт изменяет его права доступа и владельца, устанавливая права 770 и назначая владельцем пользователя apache и группу fastsecure. Это позволяет другим пользователям и скриптам без проблем создавать файлы и подкаталоги внутри отслеживаемой директории.
+- **Handling New Subdirectories**: When a new subdirectory is created, the script changes its permissions and ownership, setting permissions to 770 and assigning the owner as the apache user and the group as fastsecure. This allows other users and scripts to create files and subdirectories within the monitored directory without issues.
 
-- Управление процессами: Скрипт проверяет, выполняется ли он уже, используя PID-файл, предотвращая запуск нескольких экземпляров одновременно.
+- **Process Management**: The script checks if it is already running using a PID file, preventing multiple instances from being executed simultaneously.
 
-- Логгирование: Скрипт ведет запись в лог-файл (/var/log/httpd/watch_dir.log), фиксируя обработку новых подкаталогов.
+- **Logging**: The script logs its activities to a log file (/var/log/httpd/watch_dir.log), recording the processing of new subdirectories.
 
-- Очистка ресурсов: В случае прерывания (например, SIGINT или SIGTERM), скрипт корректно завершает работу и удаляет PID-файл.
+- **Resource Cleanup**: In case of interruption (e.g., SIGINT or SIGTERM), the script correctly terminates and removes the PID file.
 
-Этот скрипт обеспечивает управление безопасностью и доступом к директориям, упрощая работу с логами ModSecurity, что делает его идеальным инструментом для администраторов веб-серверов.
+This script ensures security and access management for directories, simplifying the handling of ModSecurity logs, making it an ideal tool for web server administrators.
 
