@@ -71,9 +71,9 @@ Before running the script, ensure that:
 
 10. **severity** - The severity level of the ModSecurity rule trigger. It can be INFO, WARNING, or ERROR.
 
-11. **maturity** - An assessment of the maturity of the ModSecurity rule. Usually, a scale from 0 to 5 is used, where 0 is the lowest maturity level and 5 is the highest.
+11. **maturity** - An assessment of the maturity of the ModSecurity rule. Usually, a scale from 1 to 9 is used, where 1 is the lowest maturity level and 9 is the highest.
 
-12. **accuracy** - An assessment of the accuracy of the ModSecurity rule. Typically, a scale from 0 to 5 is used, where 0 is the lowest accuracy and 5 is the highest.
+12. **accuracy** - An assessment of the accuracy of the ModSecurity rule. Typically, a scale from 1 to 9 is used, where 1 is the lowest accuracy and 9 is the highest.
 
 13. **responce_header** - The HTTP response header sent to the client.
 
