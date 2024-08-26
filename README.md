@@ -3,7 +3,9 @@
 ## Описание скрипта mod_sec_log_parser.py
 Этот скрипт предназначен для обработки и анализа логов, созданных модулем ModSecurity на веб-сервере Apache в режиме SecAuditLogType Concurrent. Он автоматически извлекает ключевые данные из логов, хранящихся в виде отдельных мелких файлов, объединяет их в один лог-файл и записывает информацию в базу данных MySQL для удобного анализа и отчётности. Скрипт также осуществляет очистку обработанных файлов и пустых директорий, поддерживая организованную файловую структуру.
 
-Скрипты решают проблемы с использованием глобального мьютекста с модулем Apache2 MPM ITK [issues/712](https://github.com/owasp-modsecurity/ModSecurity/issues/712)
+Скрипты решают проблемы с использованием глобального мьютекста с модулем Apache2 MPM ITK [issues/454](https://github.com/owasp-modsecurity/ModSecurity/issues/454), [issues/712](https://github.com/owasp-modsecurity/ModSecurity/issues/712)
+
+
 
 [ModSecurity Handbook: Getting Started: Chapter 4. Logging](https://www.feistyduck.com/library/modsecurity-handbook-free/online/ch04-logging.html)
 
