@@ -164,3 +164,44 @@ This script is designed to monitor and manage access permissions for directories
 
 This script ensures security and access management for directories, simplifying the handling of ModSecurity logs, making it an ideal tool for web server administrators.
 
+
+## ModSecurity Configuration Directives
+
+The following directives are crucial for the proper functioning of the ModSecurity module on your Apache web server. These settings ensure that the audit logging system operates effectively, especially in Concurrent SecAuditLogType mode.
+
+### Configuration Directives:
+
+<IfModule mod_security2.c>
+    # This directive specifies the type of audit log.
+    SecAuditLogType Concurrent
+    
+    # Set the directory permissions for the audit log.
+    SecAuditLogDirMode 0777
+    
+    # Set the file permissions for the audit log.
+    SecAuditLogFileMode 0600
+
+    # These directives define the temporary directory and data directory for ModSecurity.
+    SecTmpDir /var/lib/mod_security
+    SecDataDir /var/lib/mod_security
+    
+    # Specify the directory for storing audit logs.
+    SecAuditLogStorageDir /var/log/httpd/modsec_audit
+</IfModule>
+
+
+### Explanation of Directives:
+
+- **SecAuditLogType Concurrent**: This directive sets the audit log type to Concurrent, allowing multiple processes to write logs simultaneously without conflicts.
+
+- **SecAuditLogDirMode 0777**: This sets the permissions for the audit log directory, allowing full access to all users. This is necessary for concurrent writing but should be managed carefully to maintain security.
+
+- **SecAuditLogFileMode 0600**: This restricts access to the audit log files, allowing only the owner (typically the Apache user) to read and write to these files, enhancing security.
+
+- **SecTmpDir and SecDataDir**: These directives specify temporary and data directories used by ModSecurity. They should be set to appropriate paths where ModSecurity can store temporary files securely.
+
+- **SecAuditLogStorageDir**: This defines the directory where the audit logs will be stored. Ensure that this directory has the correct permissions set for proper logging.
+
+### Important Note:
+Make sure to review and adjust the permissions according to your security policies. While 0777 allows for flexibility in concurrent logging, it may introduce security risks if not monitored properly.
+
