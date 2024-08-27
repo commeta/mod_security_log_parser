@@ -86,7 +86,7 @@ def connect_to_db():
         return None
 
 def sanitize_string(s):
-    return re.sub(r'[^\w\s./~!\(\):@&=+$,?#%]+', ' ', s)
+    return re.sub(r'[^\w\s./~!_\(\):@&=+$,?#%]+', ' ', s)
 
 def validate_data(data):
     for key in data:
