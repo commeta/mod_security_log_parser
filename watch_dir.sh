@@ -32,8 +32,6 @@ write_pid
 
 process_new_directory() {
     local NEW_DIR=$1
-    local RELATIVE_PATH=${NEW_DIR#$WATCH_DIR}
-
     chmod 770 "$NEW_DIR"
     chown apache:fastsecure "$NEW_DIR"
 }
