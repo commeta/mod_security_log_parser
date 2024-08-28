@@ -34,16 +34,8 @@ process_new_directory() {
     local NEW_DIR=$1
     local RELATIVE_PATH=${NEW_DIR#$WATCH_DIR}
 
-    if [[ $RELATIVE_PATH == */* ]]; then
-        # Это подкаталог второго уровня или глубже
-        chmod 770 "$NEW_DIR"
-        chown apache:fastsecure "$NEW_DIR"
-        echo "New subdirectory detected: $NEW_DIR" >> /var/log/httpd/watch_dir.log
-    else
-        # Это каталог первого уровня
-        find "$NEW_DIR" -type d -exec chmod 770 {} \; -exec chown apache:fastsecure {} \;
-        echo "New top-level directory detected and processed recursively: $NEW_DIR" >> /var/log/httpd/watch_dir.log
-    fi
+    chmod 770 "$NEW_DIR"
+    chown apache:fastsecure "$NEW_DIR"
 }
 
 (
