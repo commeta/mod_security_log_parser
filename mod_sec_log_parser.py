@@ -89,7 +89,7 @@ def sanitize_string(s):
     s = s.replace('*', '+')
     s = s.replace('--', ' ')
     s = s.replace(';', '.')
-    s = re.sub(r'[^\w\s./-~!*\(\):@&_=+$,?#%\[\]\\]+', ' ', s)
+    s = re.sub(r'[^\w\s./\-~!*\(\):@&_=+$,?#%\[\]\\]+', ' ', s)
     return s
 
 def validate_data(data):
