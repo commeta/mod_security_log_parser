@@ -43,7 +43,7 @@ regex_patterns = {
     'severity': re.compile(r'\[severity "(\w+)"\]'),
     'maturity': re.compile(r'\[maturity "(\d+)"\]'),
     'accuracy': re.compile(r'\[accuracy "(\d+)"\]'),
-    'responce_header': re.compile(r'--[0-9a-f]+-F--\n(HTTP/\d\.\d \d{3} [^\r\n]+)'),
+    'responce_header': re.compile(r'--[0-9a-f]+-F--\nHTTP/\d\.\d (\d{3}) [^\r\n]+'),
     'Engine-Mode': re.compile(r'Engine-Mode: "(.+)"'),
     'message': re.compile(r'Message: (.+) \['),
     'Score': re.compile(r'Total Inbound Score: (\d+), SQLi=\d+, XSS=\d+'),
