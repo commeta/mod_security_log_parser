@@ -38,7 +38,7 @@ CREATE TABLE `logs` (
   `maturity` int(11) DEFAULT NULL,
   `accuracy` int(11) DEFAULT NULL,
   `User_Agent` text DEFAULT NULL,
-  `responce_header` int(11) DEFAULT NULL,
+  `responce_header` int(3) DEFAULT NULL,
   `Engine_Mode` varchar(20) DEFAULT NULL,
   `Score` int(11) DEFAULT NULL,
   `SQLi` int(11) DEFAULT NULL,
