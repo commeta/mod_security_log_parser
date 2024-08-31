@@ -69,7 +69,7 @@ Before running the script, ensure that:
 
 9. **unique_id** - A unique identifier for the request that allows tracking its processing in the logs.
 
-10. **severity** - The severity level of the ModSecurity rule trigger. It can be INFO, WARNING, or ERROR.
+10. **severity** - The severity level of the ModSecurity rule trigger. It can be NOTICE, CRITICAL.
 
 11. **maturity** - An assessment of the maturity of the ModSecurity rule. Usually, a scale from 1 to 9 is used, where 1 is the lowest maturity level and 9 is the highest.
 
