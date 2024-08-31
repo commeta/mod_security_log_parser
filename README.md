@@ -79,9 +79,14 @@ Before running the script, ensure that:
 
 14. **Engine-Mode** - The mode in which ModSecurity operated while processing the request.
 
-15. **apache_error** - An Apache error that occurred while processing the request.
+15. **Score** - Total Inbound Score: This is the overall anomaly score calculated by ModSecurity for the given request. The higher the score, the more suspicious the user’s behavior.
 
-16. **created_at** - The date and time when the ModSecurity rule was triggered in ISO 8601 format.
+16. **SQLi** - This represents the number of anomalies detected that are related to potential SQL injection attacks.
+
+17. **XSS** - This represents the number of anomalies detected that are related to potential Cross-Site Scripting (XSS) attacks.
+
+
+17. **created_at** - The date and time when the ModSecurity rule was triggered in ISO 8601 format.
 
 #### Example ModSecurity Log:
 ```
