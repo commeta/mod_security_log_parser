@@ -45,7 +45,7 @@ regex_patterns = {
     'accuracy': re.compile(r'\[accuracy "(\d+)"\]'),
     'responce_header': re.compile(r'--[0-9a-f]+-F--\n(HTTP/\d\.\d \d{3} [^\r\n]+)'),
     'Engine-Mode': re.compile(r'Engine-Mode: "(.+)"'),
-    'apache_error': re.compile(r'Apache-Error: (.+)'),
+    'apache_error': re.compile(r'Apache-Error: .+ ModSecurity: (.+) \['),
     'Score': re.compile(r'Total Inbound Score: (\d+), SQLi=\d+, XSS=\d+'),
     'SQLi': re.compile(r'Total Inbound Score: \d+, SQLi=(\d+), XSS=\d+'),
     'XSS': re.compile(r'Total Inbound Score: \d+, SQLi=\d+, XSS=(\d+)'),
