@@ -85,8 +85,7 @@ Before running the script, ensure that:
 
 17. **XSS** - This represents the number of anomalies detected that are related to potential Cross-Site Scripting (XSS) attacks.
 
-
-17. **created_at** - The date and time when the ModSecurity rule was triggered in ISO 8601 format.
+18. **created_at** - The date and time when the ModSecurity rule was triggered in ISO 8601 format.
 
 #### Example ModSecurity Log:
 ```
