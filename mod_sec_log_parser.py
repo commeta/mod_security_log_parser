@@ -46,6 +46,10 @@ regex_patterns = {
     'responce_header': re.compile(r'--[0-9a-f]+-F--\n(HTTP/\d\.\d \d{3} [^\r\n]+)'),
     'Engine-Mode': re.compile(r'Engine-Mode: "(.+)"'),
     'apache_error': re.compile(r'Apache-Error: (.+)'),
+    'Score': re.compile(r'Total Inbound Score: (\d+), SQLi=\d+, XSS=\d+'),
+    'SQLi': re.compile(r'Total Inbound Score: \d+, SQLi=(\d+), XSS=\d+'),
+    'XSS': re.compile(r'Total Inbound Score: \d+, SQLi=\d+, XSS=(\d+)'),
+    'phase': re.compile(r'\(phase (\d)\)'),
     'created_at': re.compile(r'\[(\d{2}/\w{3}/\d{4}:\d{2}:\d{2}:\d{2} [+-]\d{4})\]')
 }
 
@@ -106,15 +110,16 @@ def insert_into_db(connection, data):
     data = validate_data(data)
         
     insert_query = """
-    INSERT INTO logs (REQUEST_METHOD, REQUEST_URI, REMOTE_ADDR, ruleId, Host, msg, data, unique_id, severity, maturity, accuracy, User_Agent, responce_header, Engine_Mode, created_at)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    INSERT INTO logs (REQUEST_METHOD, REQUEST_URI, REMOTE_ADDR, ruleId, Host, msg, data, unique_id, severity, maturity, accuracy, User_Agent, responce_header, Engine_Mode, Score, SQLi, XSS, phase, created_at)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
     cursor.execute(insert_query, (
         data['REQUEST_METHOD'], data['REQUEST_URI'], data['REMOTE_ADDR'], data['ruleId'], data['Host'], data['msg'], 
         data['data'], data['unique_id'], data['severity'], data['maturity'], data['accuracy'], data['User-Agent'], 
-        data['responce_header'], data['Engine-Mode'], data['created_at']
+        data['responce_header'], data['Engine-Mode'], data['Score'], data['SQLi'], data['XSS'], data['phase'], data['created_at']
     ))
     connection.commit()
+
 
 def main():
     connection = connect_to_db()
