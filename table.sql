@@ -35,15 +35,15 @@ CREATE TABLE `logs` (
   `data` text DEFAULT NULL,
   `unique_id` varchar(50) DEFAULT NULL,
   `severity` varchar(20) DEFAULT NULL,
-  `maturity` int(11) DEFAULT NULL,
-  `accuracy` int(11) DEFAULT NULL,
+  `maturity` int(2) DEFAULT NULL,
+  `accuracy` int(2) DEFAULT NULL,
   `User_Agent` text DEFAULT NULL,
   `responce_header` int(3) DEFAULT NULL,
   `Engine_Mode` varchar(20) DEFAULT NULL,
-  `Score` int(11) DEFAULT NULL,
-  `SQLi` int(11) DEFAULT NULL,
-  `XSS` int(11) DEFAULT NULL,
-  `phase` int(11) DEFAULT NULL,
+  `Score` int(2) DEFAULT NULL,
+  `SQLi` int(2) DEFAULT NULL,
+  `XSS` int(2) DEFAULT NULL,
+  `phase` int(1) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
