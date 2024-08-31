@@ -40,6 +40,10 @@ CREATE TABLE `logs` (
   `User_Agent` text DEFAULT NULL,
   `responce_header` text DEFAULT NULL,
   `Engine_Mode` varchar(20) DEFAULT NULL,
+  `Score` int(11) DEFAULT NULL,
+  `SQLi` int(11) DEFAULT NULL,
+  `XSS` int(11) DEFAULT NULL,
+  `phase` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
