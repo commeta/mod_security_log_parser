@@ -85,7 +85,9 @@ Before running the script, ensure that:
 
 17. **XSS** - This represents the number of anomalies detected that are related to potential Cross-Site Scripting (XSS) attacks.
 
-18. **created_at** - The date and time when the ModSecurity rule was triggered in ISO 8601 format.
+18. **phase** - The stage of request processing: Phase 1: Request Headers, Phase 2: Request Body, Phase 3: Response Headers, Phase 4: Response Body, Phase 5: Logging.
+
+19. **created_at** - The date and time when the ModSecurity rule was triggered in ISO 8601 format.
 
 #### Example ModSecurity Log:
 ```
