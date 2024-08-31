@@ -45,7 +45,7 @@ regex_patterns = {
     'accuracy': re.compile(r'\[accuracy "(\d+)"\]'),
     'responce_header': re.compile(r'--[0-9a-f]+-F--\n(HTTP/\d\.\d \d{3} [^\r\n]+)'),
     'Engine-Mode': re.compile(r'Engine-Mode: "(.+)"'),
-    'apache_error': re.compile(r'Apache-Error: .+ ModSecurity: (.+) \['),
+    'message': re.compile(r'Message: (.+) \['),
     'Score': re.compile(r'Total Inbound Score: (\d+), SQLi=\d+, XSS=\d+'),
     'SQLi': re.compile(r'Total Inbound Score: \d+, SQLi=(\d+), XSS=\d+'),
     'XSS': re.compile(r'Total Inbound Score: \d+, SQLi=\d+, XSS=(\d+)'),
@@ -65,9 +65,9 @@ def parse_log_file(file_path):
         else:
             parsed_data[key] = None
     if not parsed_data['msg']:
-        apache_error_match = regex_patterns['apache_error'].search(content)
-        if apache_error_match:
-            parsed_data['msg'] = apache_error_match.group(1)
+        message_match = regex_patterns['message'].search(content)
+        if message_match:
+            parsed_data['msg'] = message_match.group(1)
     if parsed_data['created_at']:
         parsed_data['created_at'] = datetime.strptime(parsed_data['created_at'], '%d/%b/%Y:%H:%M:%S %z')
 
