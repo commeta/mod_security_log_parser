@@ -17,7 +17,6 @@ check_running() {
         if [ -d "/proc/$pid" ]; then
 			echo "Script already running with PID $pid. Sending SIGTERM."
 			stop_inotifywait
-			kill -SIGTERM "$pid"
         else
 			# Found stale PID file, removing it
 			echo "Found stale PID file. Removing..."
