@@ -77,9 +77,8 @@ analyze_log_file() {
 
 # Monitor the audit directory for new files
 inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; do
-  log_file=$(echo "$line" | awk '{print $NF}')
-  if [ -f "$log_file" ]; then
-    analyze_log_file "$log_file"
+  if [ -f "$line" ]; then
+    analyze_log_file "$line"
   fi
 done &
 
