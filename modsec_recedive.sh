@@ -15,14 +15,13 @@ check_running() {
         pid=$(cat "$PID_FILE")
         
         if [ -d "/proc/$pid" ]; then
-            echo "Script already running with PID $pid. Sending SIGTERM."
+			echo "Script already running with PID $pid. Sending SIGTERM."
 			kill -SIGTERM "$pid"
 			stop_inotifywait
-            exit 0
         else
-            # Found stale PID file, removing it
-            echo "Found stale PID file. Removing..."
-            rm -f "$PID_FILE"
+			# Found stale PID file, removing it
+			echo "Found stale PID file. Removing..."
+			rm -f "$PID_FILE"
         fi
     fi
 }
