@@ -1,5 +1,7 @@
 # Apache ModSecurity Log Parser
 
+This script analyzes ModSecurity logs in Apache’s SecAuditLogType Concurrent mode, providing powerful real-time insights and protection against DDoS attacks.
+
 [На Русском](README_RU.md)
 
 ## Description of the mod_sec_log_parser.py Script
