@@ -92,8 +92,6 @@ analyze_log_file() {
 # Monitor the audit directory for new files
 inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; do
 	if [ -f "$line" ]; then
-		analyze_log_file "$line"
-    
 		# Очистка лога после обработки файла
 		# Проверяем, прошло ли 1 секунда с последней очистки
 		if [[ $(date +%s) -gt $(($last_cleanup_time + 1)) ]]; then
@@ -111,6 +109,8 @@ inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; d
 			done < "$LOG_FILE" 
 			last_cleanup_time=$(date +%s)
 		fi
+		
+		analyze_log_file "$line"
 	else
 		chmod 770 "$line"
 		chown apache:fastsecure "$line"
