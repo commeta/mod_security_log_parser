@@ -15,8 +15,8 @@ check_running() {
         pid=$(cat "$PID_FILE")
         
         if [ -d "/proc/$pid" ]; then
-			echo "Script already running with PID $pid. Sending SIGTERM."
-			stop_inotifywait
+		echo "Script already running with PID $pid. Sending SIGTERM."
+		stop_inotifywait
         fi
     fi
 }
