@@ -67,8 +67,8 @@ analyze_log_file() {
         sed -i "s/^$ip_address .*/$ip_address $error_count $timestamp/" "$LOG_FILE"
         
         if [[ $error_count -eq $ATTACK_THRESHOLD ]]; then 
-			echo "$ip_address - $(date +'%Y-%m-%d %H:%M:%S')" >> "$RECEDIVE_FILE"
-		fi
+            echo "$ip_address - $(date +'%Y-%m-%d %H:%M:%S')" >> "$RECEDIVE_FILE"
+        fi
       else
         # Получаем текущий timestamp из файла
         timestamp=$(grep "^$ip_address " "$LOG_FILE" | awk '{print $3}')
@@ -111,7 +111,7 @@ while true; do
       sed -i "/^$line$/d" "$LOG_FILE"
     fi
   done < "$LOG_FILE"
-  sleep $TIMEOUT
+  sleep 10
 done &
 
 # Exit the script
