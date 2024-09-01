@@ -2,21 +2,24 @@
 
 # Set variables
 WATCH_DIR="/var/log/httpd/modsec_audit/"
-LOG_FILE="/var/log/httpd/modsec_attack.log"
+LOG_FILE="/var/lib/modsecurity_recedive/modsec_recedive.dat" 
 RECEDIVE_FILE="/var/log/httpd/modsec_recedive.log"
 TIMEOUT=60  # minute in seconds
 PID_FILE="/var/run/modsec_recedive.pid"
 ATTACK_THRESHOLD=10  # Number of attacks before logging to recedive file
 
+
 # Check for running instances
 check_running() {
   if [ -f "$PID_FILE" ]; then
     pid=$(cat "$PID_FILE")
-    if [ -d "/proc/$pid" ]; then
-      echo "Script already running with PID $pid"
+    # Проверяем, запущен ли процесс с указанным PID
+    if ps -p "$pid" > /dev/null 2>&1; then
+      echo "Скрипт уже запущен с PID $pid"
       exit 1
     else
-      echo "Found stale PID file. Removing..."
+      # Удаляем устаревший PID-файл
+      echo "Найден устаревший PID-файл. Удаление..."
       rm -f "$PID_FILE"
     fi
   fi
@@ -39,6 +42,18 @@ trap cleanup SIGINT SIGTERM
 # Check for existing instances and write PID
 check_running
 write_pid
+
+# Apache Mutex dir
+if [ ! -d "/var/run/mod_security" ]; then
+	mkdir -p "/var/run/mod_security"
+    chmod 770 "/var/run/mod_security"
+    chown apache:fastsecure "/var/run/mod_security"
+fi
+
+if [ ! -d $(dirname "$LOG_FILE") ]; then
+	mkdir -p $(dirname "$LOG_FILE")
+fi
+
 
 # Ensure log files exist
 if [ ! -f "$LOG_FILE" ]; then
@@ -109,6 +124,7 @@ inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; d
     chown apache:fastsecure "$line"
   fi
 done &
+
 
 # Exit the script
 exit 0
