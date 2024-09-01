@@ -171,7 +171,7 @@ This script is designed to monitor and manage access permissions for directories
 This script ensures security and access management for directories, simplifying the handling of ModSecurity logs, making it an ideal tool for web server administrators.
 
 
-## Description of the modsec_recedive.sh script - blocking repeated violations
+## Description of the modsec_recedive.sh script - blocking DDoS attack
 ### Description:
 
 This script (modsec_recedive.sh) is designed to monitor ModSecurity logs and block IP addresses that make repeated attacks.
