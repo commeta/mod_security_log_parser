@@ -61,13 +61,17 @@ analyze_log_file() {
   if [[ $status_code -eq 403 ]]; then # Check for 403 status code
     if grep -q "^$ip_address " "$LOG_FILE"; then
       error_count=$(grep "^$ip_address " "$LOG_FILE" | awk '{print $2}')
-      error_count=$((error_count + 1))
-      sed -i "s/^$ip_address .*/$ip_address $error_count $timestamp/" "$LOG_FILE"
+      # Проверка error_count
+      if [[ $error_count -lt $ATTACK_THRESHOLD ]]; then
+        error_count=$((error_count + 1))
+        sed -i "s/^$ip_address .*/$ip_address $error_count $timestamp/" "$LOG_FILE"
+        
+        if [[ $error_count -eq $ATTACK_THRESHOLD ]]; then 
+			echo "$ip_address - $(date +'%Y-%m-%d %H:%M:%S')" >> "$RECEDIVE_FILE"
+		fi
+      fi
     else
       echo "$ip_address 1 $timestamp" >> "$LOG_FILE"
-    fi
-    if [[ $(grep "^$ip_address " "$LOG_FILE" | awk '{print $2}') -eq $ATTACK_THRESHOLD ]]; then
-      echo "$ip_address - $(date +'%Y-%m-%d %H:%M:%S')" >> "$RECEDIVE_FILE"
     fi
   fi
 }
