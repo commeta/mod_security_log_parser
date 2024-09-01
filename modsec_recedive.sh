@@ -16,8 +16,8 @@ check_running() {
         
         if [ -d "/proc/$pid" ]; then
 			echo "Script already running with PID $pid. Sending SIGTERM."
-			kill -SIGTERM "$pid"
 			stop_inotifywait
+			kill -SIGTERM "$pid"
         else
 			# Found stale PID file, removing it
 			echo "Found stale PID file. Removing..."
@@ -29,9 +29,9 @@ check_running() {
 # Function to find and send SIGTERM to inotifywait process
 stop_inotifywait() {
 	ps aux | grep "inotifywait -m -r -e create --format %w%f $WATCH_DIR" | grep -v grep | awk '{print $2}'| while read pid; do
-        kill -SIGTERM "$pid"
-        echo "Sending SIGTERM to inotifywait process with PID $pid."
-    done
+		kill -SIGTERM "$pid"
+		echo "Sending SIGTERM to inotifywait process with PID $pid."
+	done
 }
 
 # Write current PID to file
