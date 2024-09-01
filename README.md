@@ -171,17 +171,47 @@ This script is designed to monitor and manage access permissions for directories
 This script ensures security and access management for directories, simplifying the handling of ModSecurity logs, making it an ideal tool for web server administrators.
 
 
-## Description of the modsec_recedive.sh script
+## Description of the modsec_recedive.sh script - blocking repeated violations
+### Description:
 
-This script monitors ModSecurity audit log files and keeps track of attacks identified by IP address. If the number of attacks from a single IP exceeds a defined threshold, the script logs this information to a separate file.
+This script (modsec_recedive.sh) is designed to monitor ModSecurity logs and block IP addresses that make repeated attacks.
+### Architecture:
 
-Features:
+- ModSecurity: An Apache module that analyzes incoming traffic and blocks malicious requests.
+- ModSec Recedive: A script that analyzes ModSecurity logs, determines the frequency of attacks from a specific IP address, and blocks IP addresses that exceed a set threshold.
+- Fail2ban: A program that uses rules to block IP addresses that make repeated attacks on a specific service.
 
-- Automatic creation of attack logs.
-- Monitoring of the ModSecurity log directory.
-- Counting the number of attacks from a single IP address.
-- Logging to a separate file when the attack threshold for a single IP is reached.
-- Periodic cleanup of the attack log.
+### How to use:
+
+- ModSecurity configuration: Make sure that ModSecurity is installed and configured to write logs to the “/var/log/httpd/modsec_audit/” directory.
+- Script installation: Save the modsec_recedive.sh script to the desired location.
+- Parameter configuration:
+- - WATCH_DIR: Path to the directory with ModSecurity logs.
+- - LOG_FILE: Path to the file where information about the number of attacks from each IP is stored.
+- - RECEDIVE_FILE: Path to the file where IP addresses that need to be blocked are stored.
+- - TIMEOUT: The period of time (in seconds) after which information about attacks from ModSecurity logs is deleted.
+- - ATTACK_THRESHOLD: The number of attacks from a single IP address after which it falls into RECEDIVE_FILE and can be blocked.
+- Running the script: Run the script: ./modsec_recedive.sh.
+- Fail2ban configuration (optional): Create a Fail2ban rule file that will use information from RECEDIVE_FILE to block IP addresses.
+
+### Example of using Fail2ban:
+
+```
+[ModSec Recedive]
+enabled  = true
+port  = http,https
+filter   = modsec_recedive
+logpath  = /var/log/httpd/modsec_recedive.log
+maxretry = 2
+bantime  = 3600
+findtime = 600
+```
+
+### Advantages:
+
+- Reduced false positives: Monitoring the number of attacks from a single IP address reduces false positives and blocks only truly malicious actions.
+- More effective protection: Blocking IP addresses that make repeated attacks reduces the load on the server and increases the level of protection.
+- Flexible configuration: You can easily configure the script settings to suit the needs of your system.
 
 
 ## ModSecurity Configuration Directives
