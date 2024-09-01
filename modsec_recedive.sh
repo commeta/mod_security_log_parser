@@ -67,15 +67,26 @@ analyze_log_file() {
         sed -i "s/^$ip_address .*/$ip_address $error_count $timestamp/" "$LOG_FILE"
         
         if [[ $error_count -eq $ATTACK_THRESHOLD ]]; then 
-		echo "$ip_address - $(date +'%Y-%m-%d %H:%M:%S')" >> "$RECEDIVE_FILE"
-	fi
-      fi
+			echo "$ip_address - $(date +'%Y-%m-%d %H:%M:%S')" >> "$RECEDIVE_FILE"
+		fi
+      else
+        # Получаем текущий timestamp из файла
+        timestamp=$(grep "^$ip_address " "$LOG_FILE" | awk '{print $3}')
+        error_count=$((error_count + 1))
+        sed -i "s/^$ip_address .*/$ip_address $error_count $timestamp/" "$LOG_FILE"
+        
+        if [[ $((error_count % ATTACK_THRESHOLD)) -eq 0 ]]; then 
+            echo "$ip_address - $(date +'%Y-%m-%d %H:%M:%S')" >> "$RECEDIVE_FILE"
+        fi        
+      fi	
     else
       echo "$ip_address 1 $timestamp" >> "$LOG_FILE"
     fi
   fi
 }
 
+
+# Monitor the audit directory for new files
 inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; do
   if [ -f "$line" ]; then
     analyze_log_file "$line"
@@ -86,10 +97,20 @@ inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; d
 done &
 
 # Clean up old entries from the attack log
+
 while true; do
   current_timestamp=$(date +%s)
   threshold_timestamp=$((current_timestamp - TIMEOUT))
-  sed -i "/^.* $threshold_timestamp$/d" "$LOG_FILE"
+  # Перебираем все строки в файле
+  while read -r line; do
+    # Извлекаем timestamp из строки
+    timestamp=$(echo "$line" | awk '{print $3}')
+    # Проверяем, истек ли timestamp
+    if [[ $timestamp -lt $threshold_timestamp ]]; then
+      # Удаляем строку из файла
+      sed -i "/^$line$/d" "$LOG_FILE"
+    fi
+  done < "$LOG_FILE"
   sleep $TIMEOUT
 done &
 
