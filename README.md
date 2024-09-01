@@ -205,7 +205,7 @@ enabled  = true
 port  = http,https
 filter   = modsec_recedive
 logpath  = /var/log/httpd/modsec_recedive.log
-maxretry = 2
+maxretry = 3
 bantime  = 3600
 findtime = 600
 ```
