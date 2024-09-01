@@ -89,6 +89,8 @@ analyze_log_file() {
 # Monitor the audit directory for new files
 inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; do
   if [ -f "$line" ]; then
+    analyze_log_file "$line"
+    
     current_timestamp=$(date +%s)
     threshold_timestamp=$((current_timestamp - TIMEOUT))
     # Перебираем все строки в файле
@@ -102,7 +104,6 @@ inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; d
       fi
     done < "$LOG_FILE"    
     
-    analyze_log_file "$line"
   else
     chmod 770 "$line"
     chown apache:fastsecure "$line"
