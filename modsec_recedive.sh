@@ -4,7 +4,7 @@
 WATCH_DIR="/var/log/httpd/modsec_audit/"
 LOG_FILE="/var/log/httpd/modsec_attack.log"
 RECEDIVE_FILE="/var/log/httpd/modsec_recedive.log"
-TIMEOUT=600  # 10 minutes in seconds
+TIMEOUT=180  # 3 minutes in seconds
 PID_FILE="/var/run/modsec_recedive.pid"
 ATTACK_THRESHOLD=10  # Number of attacks before logging to recedive file
 
