@@ -13,6 +13,7 @@ old_timestamp=0
 check_running() {
     if [ -f "$PID_FILE" ]; then
         pid=$(cat "$PID_FILE")
+        
         if [ -d "/proc/$pid" ]; then
             echo "Script already running with PID $pid. Sending SIGTERM."
 			kill -SIGTERM "$pid"
@@ -53,6 +54,7 @@ trap cleanup SIGINT SIGTERM
 check_running
 write_pid
 
+
 if [ ! -d $(dirname "$LOG_FILE") ]; then
 	mkdir -p $(dirname "$LOG_FILE")
 fi
@@ -72,17 +74,22 @@ analyze_log_file() {
 	local log_file="$1"
 	local ip_address
 	local error_count
-	local timestamp=$(date +%s)
+	local timestamp
 	local status_code
-	ip_address=$(grep "X-Real-IP" "$log_file" | awk '{print $2}')
+	
 	status_code=$(grep "HTTP/1.1" "$log_file" | awk '{print $2}') 
 	
 	if [[ $status_code -eq 403 ]]; then # Check for 403 status code
+		ip_address=$(grep "X-Real-IP" "$log_file" | awk '{print $2}')
+	
 		if grep -q "^$ip_address " "$LOG_FILE"; then
 			error_count=$(grep "^$ip_address " "$LOG_FILE" | awk '{print $2}')
+			
 			# Проверка error_count
 			if [[ $error_count -lt $ATTACK_THRESHOLD ]]; then
+				timestamp=$(date +%s)
 				error_count=$((error_count + 1))
+				
 				sed -i "s/^$ip_address .*/$ip_address $error_count $timestamp/" "$LOG_FILE"
         
 				if [[ $error_count -eq $ATTACK_THRESHOLD ]]; then 
@@ -92,6 +99,7 @@ analyze_log_file() {
 				# Получаем текущий timestamp из файла
 				timestamp=$(grep "^$ip_address " "$LOG_FILE" | awk '{print $3}')
 				error_count=$((error_count + 1))
+				
 				sed -i "s/^$ip_address .*/$ip_address $error_count $timestamp/" "$LOG_FILE"
         
 				if [[ $((error_count % ATTACK_THRESHOLD)) -eq 0 ]]; then 
@@ -99,6 +107,7 @@ analyze_log_file() {
 				fi        
 			fi	
 		else
+			timestamp=$(date +%s)
 			echo "$ip_address 1 $timestamp" >> "$LOG_FILE"
 		fi
 	fi
@@ -115,10 +124,12 @@ inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; d
 		
 		if [[ $old_timestamp -ne $current_timestamp ]]; then
 			threshold_timestamp=$((current_timestamp - TIMEOUT))
+			
 			# Перебираем все строки в файле
 			while read -r line; do
 				# Извлекаем timestamp из строки
 				timestamp=$(echo "$line" | awk '{print $3}')
+				
 				# Проверяем, истек ли timestamp
 				if [[ $timestamp -lt $threshold_timestamp ]]; then
 					# Удаляем строку из файла
