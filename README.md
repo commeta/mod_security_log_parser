@@ -171,6 +171,19 @@ This script is designed to monitor and manage access permissions for directories
 This script ensures security and access management for directories, simplifying the handling of ModSecurity logs, making it an ideal tool for web server administrators.
 
 
+## Description of the modsec_recedive.sh script
+
+This script monitors ModSecurity audit log files and keeps track of attacks identified by IP address. If the number of attacks from a single IP exceeds a defined threshold, the script logs this information to a separate file.
+
+Features:
+
+- Automatic creation of attack logs.
+- Monitoring of the ModSecurity log directory.
+- Counting the number of attacks from a single IP address.
+- Logging to a separate file when the attack threshold for a single IP is reached.
+- Periodic cleanup of the attack log.
+
+
 ## ModSecurity Configuration Directives
 
 The following directives are crucial for the proper functioning of the ModSecurity module on your Apache web server. These settings ensure that the audit logging system operates effectively, especially in Concurrent SecAuditLogType mode.
