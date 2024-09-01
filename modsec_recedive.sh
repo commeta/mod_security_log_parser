@@ -55,23 +55,20 @@ analyze_log_file() {
   local ip_address
   local error_count
   local timestamp=$(date +%s)
-
-  # Extract IP address from audit log
+  local status_code
   ip_address=$(grep "X-Real-IP" "$log_file" | awk '{print $2}')
-
-  # Check if IP address exists in attack log
-  if grep -q "^$ip_address " "$LOG_FILE"; then
-    error_count=$(grep "^$ip_address " "$LOG_FILE" | awk '{print $2}')
-    error_count=$((error_count + 1))
-    sed -i "s/^$ip_address .*/$ip_address $error_count $timestamp/" "$LOG_FILE"
-  else
-    # Add new IP address to attack log
-    echo "$ip_address 1 $timestamp" >> "$LOG_FILE"
-  fi
-
-  # Log recedive if attack threshold is reached
-  if [[ $(grep "^$ip_address " "$LOG_FILE" | awk '{print $2}') -eq $ATTACK_THRESHOLD ]]; then
-    echo "$ip_address - $(date +'%Y-%m-%d %H:%M:%S')" >> "$RECEDIVE_FILE"
+  status_code=$(grep "HTTP/1.1" "$log_file" | awk '{print $2}') 
+  if [[ $status_code -eq 403 ]]; then # Check for 403 status code
+    if grep -q "^$ip_address " "$LOG_FILE"; then
+      error_count=$(grep "^$ip_address " "$LOG_FILE" | awk '{print $2}')
+      error_count=$((error_count + 1))
+      sed -i "s/^$ip_address .*/$ip_address $error_count $timestamp/" "$LOG_FILE"
+    else
+      echo "$ip_address 1 $timestamp" >> "$LOG_FILE"
+    fi
+    if [[ $(grep "^$ip_address " "$LOG_FILE" | awk '{print $2}') -eq $ATTACK_THRESHOLD ]]; then
+      echo "$ip_address - $(date +'%Y-%m-%d %H:%M:%S')" >> "$RECEDIVE_FILE"
+    fi
   fi
 }
 
