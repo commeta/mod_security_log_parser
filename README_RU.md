@@ -181,7 +181,7 @@ chown <owner>:<group> /var/run/mod_security
 Следующие директивы являются ключевыми для правильного функционирования модуля ModSecurity на вашем веб-сервере Apache. Эти настройки обеспечивают эффективную работу системы аудита, особенно в режиме Concurrent SecAuditLogType.
 
 ### Директивы конфигурации:
-
+```
 <IfModule mod_security2.c>
     # Эта директива указывает тип аудита.
     SecAuditLogType Concurrent
@@ -199,7 +199,7 @@ chown <owner>:<group> /var/run/mod_security
     # Указывает директорию для хранения аудита.
     SecAuditLogStorageDir /var/log/httpd/modsec_audit
 </IfModule>
-
+```
 
 ### Объяснение директив:
 
