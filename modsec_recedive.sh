@@ -75,10 +75,12 @@ analyze_log_file() {
   fi
 }
 
-# Monitor the audit directory for new files
 inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; do
   if [ -f "$line" ]; then
     analyze_log_file "$line"
+  else
+    chmod 770 "$line"
+    chown apache:fastsecure "$line"
   fi
 done &
 
