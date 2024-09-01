@@ -1,6 +1,6 @@
 # Apache mod security log parser
 
-Скрипты анализирует логи ModSecurity в режиме SecAuditLogType Concurrent в Apache mod security 2.x, предоставляя возможности для анализа в реальном времени и защиты от DDoS-атак.
+Скрипты анализируют логи ModSecurity в режиме SecAuditLogType Concurrent в Apache mod security 2.x, предоставляя возможности для анализа в реальном времени и защиты от DDoS-атак.
 
 [English](README.md)
 
