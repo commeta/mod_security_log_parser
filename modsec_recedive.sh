@@ -7,7 +7,7 @@ RECEDIVE_FILE="/var/log/httpd/modsec_recedive.log"
 TIMEOUT=60  # minute in seconds
 PID_FILE="/var/run/modsec_recedive.pid"
 ATTACK_THRESHOLD=10  # Number of attacks before logging to recedive file
-
+old_timestamp=0
 
 # Check for running instances
 check_running() {
@@ -52,7 +52,6 @@ trap cleanup SIGINT SIGTERM
 # Check for existing instances and write PID
 check_running
 write_pid
-
 
 if [ ! -d $(dirname "$LOG_FILE") ]; then
 	mkdir -p $(dirname "$LOG_FILE")
@@ -110,20 +109,25 @@ analyze_log_file() {
 inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; do
 	if [ -f "$line" ]; then
 		analyze_log_file "$line"
-    
+		
 		# Очистка лога после обработки файла
 		current_timestamp=$(date +%s)
-		threshold_timestamp=$((current_timestamp - TIMEOUT))
-		# Перебираем все строки в файле
-		while read -r line; do
-			# Извлекаем timestamp из строки
-			timestamp=$(echo "$line" | awk '{print $3}')
-			# Проверяем, истек ли timestamp
-			if [[ $timestamp -lt $threshold_timestamp ]]; then
-				# Удаляем строку из файла
-				sed -i "/^$line$/d" "$LOG_FILE"
-			fi
-		done < "$LOG_FILE"    
+		
+		if [[ $old_timestamp -ne $current_timestamp ]]; then
+			threshold_timestamp=$((current_timestamp - TIMEOUT))
+			# Перебираем все строки в файле
+			while read -r line; do
+				# Извлекаем timestamp из строки
+				timestamp=$(echo "$line" | awk '{print $3}')
+				# Проверяем, истек ли timestamp
+				if [[ $timestamp -lt $threshold_timestamp ]]; then
+					# Удаляем строку из файла
+					sed -i "/^$line$/d" "$LOG_FILE"
+				fi
+			done < "$LOG_FILE"   
+			
+			old_timestamp=$current_timestamp
+		fi
 	else
 		chmod 770 "$line"
 		chown apache:fastsecure "$line"
