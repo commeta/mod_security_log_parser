@@ -11,6 +11,11 @@ log() {
 # Получить вывод от curl
 server_status=$(curl -s http://127.0.0.1:81/server-status?auto)
 
+if [ $? -ne 0 ]; then
+    log "Failed to get server status"
+    exit 1
+fi
+
 # Извлечь CPU load
 cpu_load=$(echo "$server_status" | grep "CPULoad" | awk '{print $2}')
 
@@ -36,19 +41,22 @@ function restore_requests {
   fi
 }
 
-# Проверка CPU load
-if [[ ! -z "$cpu_load" && $(bc <<< "$cpu_load > .5") -eq 1 ]]; then
-  slow_down_requests
-fi
 
 # Проверка Requests per second
 if [[ ! -z "$requests_per_sec" && $(bc <<< "$requests_per_sec > 5.1") -eq 1 ]]; then
-  slow_down_requests
+	# Проверка CPU load
+	if [[ ! -z "$cpu_load" && $(bc <<< "$cpu_load > .5") -eq 1 ]]; then
+	  slow_down_requests
+	fi
 fi
 
 # Проверка на стабилизацию
 if [ -f "$STATE_FILE" ]; then
-  if [[ ! -z "$cpu_load" && $(bc <<< "$cpu_load <= .5") -eq 1 && ! -z "$requests_per_sec" && $(bc <<< "$requests_per_sec <= 5.1") -eq 1 ]]; then
+  if [[ -z "$cpu_load" ]]; then
     restore_requests
+  else
+	  if [[ $(bc <<< "$cpu_load <= .5") -eq 1 && ! -z "$requests_per_sec" && $(bc <<< "$requests_per_sec <= 5.1") -eq 1 ]]; then
+		restore_requests
+	  fi
   fi
 fi
