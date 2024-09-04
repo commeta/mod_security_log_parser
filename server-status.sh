@@ -24,18 +24,26 @@ requests_per_sec=$(echo "$server_status" | grep "ReqPerSec" | awk '{print $2}')
 
 # Замедление новых запросов
 function slow_down_requests {
-	if [ ! -f "$STATE_FILE" ]; then
-		iptables -A INPUT -p tcp --dport 80 -m recent --set --name SLOW_DOWN
-		iptables -A INPUT -p tcp --dport 80 -m recent --update --seconds 60 --hitcount 5 --name SLOW_DOWN -j DROP
+	if [[ ! -f "$STATE_FILE" ]]; then
+		# Блокировка новых соединений
+		iptables -A INPUT -p tcp --dport 80 -m state --state NEW -m recent --set --name SLOW_DOWN
+		iptables -A INPUT -p tcp --dport 80 -m state --state NEW -m recent --update --seconds 60 --hitcount 5 --name SLOW_DOWN -j DROP
+
+		# Пропускание установленных соединений
+		#iptables -A INPUT -p tcp --dport 80 -m state --state ESTABLISHED,RELATED -j ACCEPT
+
 		touch "$STATE_FILE"
 		log "Activated request slowdown"
 	fi
 }
 
 function restore_requests {
-	if [ -f "$STATE_FILE" ]; then
-		iptables -D INPUT -p tcp --dport 80 -m recent --set --name SLOW_DOWN
-		iptables -D INPUT -p tcp --dport 80 -m recent --update --seconds 60 --hitcount 5 --name SLOW_DOWN -j DROP
+	if [[ -f "$STATE_FILE" ]]; then
+		iptables -D INPUT -p tcp --dport 80 -m state --state NEW -m recent --set --name SLOW_DOWN
+		iptables -D INPUT -p tcp --dport 80 -m state --state NEW -m recent --update --seconds 60 --hitcount 5 --name SLOW_DOWN -j DROP
+        
+		#iptables -D INPUT -p tcp --dport 80 -m state --state ESTABLISHED,RELATED -j ACCEPT
+        
 		rm "$STATE_FILE"
 		log "Deactivated request slowdown"
 	fi
