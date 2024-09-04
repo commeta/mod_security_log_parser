@@ -53,6 +53,7 @@ Before running the script, ensure that:
 - The encoding of the log files (the script uses latin-1) matches the actual encoding. If you are working with logs of a different encoding, make sure it is specified correctly.
 
 ### Description of ModSecurity Audit Log Fields Extracted by the Script:
+![phpmyadmin](phpmyadmin.png)
 
 1. **REQUEST_METHOD** - The HTTP request method (e.g., GET, POST, PUT, DELETE).
 
