@@ -1,6 +1,6 @@
 # Apache ModSecurity Log Parser
 
-Analyzes ModSecurity logs in Apache’s SecAuditLogType Concurrent mode, providing real-time analysis capabilities and protection against DDoS attacks.
+These scripts analyze ModSecurity logs in SecAuditLogType Concurrent mode within Apache mod_security 2.x, providing real-time analysis capabilities and protection against DDoS attacks. The script operates at layer 7 of the OSI model, tracking bots and identifying suspicious behavior. Upon detecting malicious activity, it triggers a block at layer 3 of the OSI model using fail2ban and iptables, blocking the IP addresses of attackers at the network level. This approach enables rapid response to attacks, effectively safeguarding your server. 
 
 
 [На Русском](README_RU.md)
