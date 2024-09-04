@@ -55,6 +55,7 @@
 
 
 ### Описание значений полей лог-файла ModSecurity Audit Log, которые извлекаются скриптом:
+![phpmyadmin](phpmyadmin.png)
 
 1. REQUEST_METHOD - HTTP-метод запроса (например, GET, POST, PUT, DELETE).
 
