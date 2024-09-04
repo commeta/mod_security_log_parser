@@ -175,6 +175,8 @@ This script ensures security and access management for directories, simplifying 
 
 
 ## Description of the modsec_recedive.sh script - blocking DDoS attack
+![htop](htop.png)
+
 ### Description:
 
 This script (modsec_recedive.sh) is designed to monitor ModSecurity logs and block IP addresses that make repeated attacks.
