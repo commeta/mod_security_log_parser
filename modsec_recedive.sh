@@ -75,6 +75,11 @@ analyze_log_file() {
 	
 	if [[ $status_code -eq 403 ]]; then # Check for 403 status code
 		ip_address=$(grep "X-Real-IP" "$log_file" | awk '{print $2}')
+  
+		# Проверка ip_address на пустую строку
+		if [[ -z "$ip_address" ]]; then
+			return 1
+		fi
 	
 		if grep -q "^$ip_address " "$LOG_FILE"; then
 			error_count=$(grep "^$ip_address " "$LOG_FILE" | awk '{print $2}')
