@@ -11,7 +11,7 @@ log() {
 # Получить вывод от curl
 server_status=$(curl -s http://127.0.0.1:81/server-status?auto)
 
-if [ $? -ne 0 ]; then
+if [[ $? -ne 0 ]]; then
 	log "Failed to get server status"
 	exit 1
 fi
@@ -25,10 +25,10 @@ requests_per_sec=$(echo "$server_status" | grep "ReqPerSec" | awk '{print $2}')
 # Замедление новых запросов
 function slow_down_requests {
 	if [[ ! -f "$STATE_FILE" ]]; then
-		# Замедление новых запросовний
-		iptables -A INPUT -p tcp --dport 80 -m state --state NEW -m limit --limit 10/minute --limit-burst 5 -j ACCEPT
+		# Замедление новых запросов
+		#iptables -A INPUT -p tcp --dport 80 -m state --state NEW -m limit --limit 10/minute --limit-burst 5 -j ACCEPT
 		#iptables -A INPUT -p tcp --dport 80 -m state --state ESTABLISHED,RELATED -j ACCEPT
-		        
+
 		touch "$STATE_FILE"
 		log "Activated request slowdown"
 	fi
@@ -36,9 +36,9 @@ function slow_down_requests {
 
 function restore_requests {
 	if [[ -f "$STATE_FILE" ]]; then
-		iptables -D INPUT -p tcp --dport 80 -m state --state NEW -m limit --limit 10/minute --limit-burst 5 -j ACCEPT
+		#iptables -D INPUT -p tcp --dport 80 -m state --state NEW -m limit --limit 10/minute --limit-burst 5 -j ACCEPT
 		#iptables -D INPUT -p tcp --dport 80 -m state --state ESTABLISHED,RELATED -j ACCEPT
-        
+
 		rm "$STATE_FILE"
 		log "Deactivated request slowdown"
 	fi
@@ -54,7 +54,7 @@ if [[ ! -z "$requests_per_sec" && $(bc <<< "$requests_per_sec > 5.1") -eq 1 ]]; 
 fi
 
 # Проверка на стабилизацию
-if [ -f "$STATE_FILE" ]; then
+if [[ -f "$STATE_FILE" ]]; then
 	if [[ -z "$cpu_load" ]]; then
 		restore_requests
 	else
