@@ -261,6 +261,7 @@ The following directives are crucial for the proper functioning of the ModSecuri
 Make sure to review and adjust the permissions according to your security policies. While 0777 allows for flexibility in concurrent logging, it may introduce security risks if not monitored properly.
 
 ## Web Server Security System
+
 ![schema](shema.png)
 
 - Request - entry point for incoming requests into the system.
