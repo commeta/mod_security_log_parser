@@ -266,8 +266,8 @@ Make sure to review and adjust the permissions according to your security polici
 - Request - entry point for incoming requests into the system.
 - ModSecurity - first level of protection through which incoming traffic passes.
 - Data Base - interacts with ModSecurity and the log analyzer.
-- LOG Analyzer - receives data from the database and sends information to iptables.
-- iptables - receives data from the log analyzer and database to configure filtering rules.
+- LOG Analyzer - receives data from the database and sends rules to iptables.
+- iptables - receives data from the log analyzer and database to filtering rules.
 - Web server - final point for processing requests.
 
 ### Advantages of using a file as a simple database:
