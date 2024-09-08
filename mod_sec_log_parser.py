@@ -23,6 +23,7 @@ MA 02110-1301, USA.
 
 import os
 import re
+import sys
 import pymysql
 from pymysql import MySQLError
 from datetime import datetime
@@ -122,6 +123,8 @@ def insert_into_db(connection, data):
 
 
 def main():
+    keep_dirs = '-k' in sys.argv
+
     connection = connect_to_db()
     if not connection:
         return
@@ -134,10 +137,12 @@ def main():
             insert_into_db(connection, parsed_data)
             os.remove(file_path)
         
-        for dir in dirs:
-            dir_path = os.path.join(root, dir)
-            if not os.listdir(dir_path):
-                os.rmdir(dir_path)
+        if not keep_dirs:
+            for dir in dirs:
+                dir_path = os.path.join(root, dir)
+                
+                if not os.listdir(dir_path):
+                    os.rmdir(dir_path)
         
     if connection.open:
         connection.close()
