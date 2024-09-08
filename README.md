@@ -16,7 +16,7 @@ These scripts analyze ModSecurity logs in SecAuditLogType Concurrent mode within
 - [Web Server Security System](#Web-Server-Security-System)
 - [Protection Methods Using Data from ModSecurity Logs](#Protection-Methods-Using-Data-from-ModSecurity-Logs)
 - [Examples of blocking or limiting at the iptables level](#Examples-of-blocking-or-limiting-at-the-iptables-level)
-
+- [Protection Methods Using Machine Learning](Protection-Methods-Using-Machine-Learning)
 
 
 ### Description of the mod_sec_log_parser Script
@@ -422,3 +422,74 @@ These approaches allow you to create a multi-layered, adaptive protection system
      ```
 
 It's important to note that these rules should be applied carefully and regularly reviewed to avoid blocking legitimate traffic. It's also recommended to use analysis and protection systems such as fail2ban or custom scripts that can analyze ModSecurity logs in real-time and dynamically update iptables rules.
+
+
+#### Protection Methods Using Machine Learning
+
+1. Anomaly Detection:
+   - Use algorithms like Isolation Forest or One-Class SVM to identify anomalous requests.
+   - Features: Score, SQLi, XSS, request frequency from REMOTE_ADDR, time between requests.
+
+ > Isolation Forest: An algorithm for anomaly detection that isolates outliers in the data. Effective for identifying unusual requests.
+
+ > One-Class SVM (Support Vector Machine): An anomaly detection method that learns from normal data and identifies deviations. Useful for identifying atypical web requests.
+
+2. Request Classification:
+   - Apply Random Forest or Gradient Boosting algorithms to classify requests as legitimate or malicious.
+   - Features: REQUEST_METHOD, REQUEST_URI, User-Agent, Score, SQLi, XSS, severity, maturity, accuracy.
+
+ > Random Forest: An ensemble method using multiple decision trees. Good for classifying requests as legitimate or malicious.
+
+ > Gradient Boosting: An ensemble method that sequentially trains weak models. Effective for accurate classification and ranking of request risks.
+
+3. Clustering:
+   - Use K-means or DBSCAN to group similar requests and identify attack patterns.
+   - Features: REQUEST_METHOD, REQUEST_URI, REMOTE_ADDR, User-Agent, Score.
+
+ > K-means: A clustering algorithm that groups similar objects. Can be used to identify groups of similar requests or attacks.
+
+ > DBSCAN (Density-Based Spatial Clustering of Applications with Noise):  Useful for identifying clusters of requests with unusual shapes and outliers.
+
+4. Time Series Analysis:
+   - Apply ARIMA or LSTM for analyzing temporal patterns in requests.
+   - Features: created_at, Score, number of requests from REMOTE_ADDR.
+
+ > ARIMA (AutoRegressive Integrated Moving Average): A model for time series analysis. Can be used for traffic forecasting and detecting anomalous patterns over time.
+
+ > LSTM (Long Short-Term Memory): A type of recurrent neural network capable of learning long-term dependencies. Effective for analyzing request sequences and identifying complex temporal attack patterns.
+
+5. Reinforcement Learning:
+   - Develop a system that dynamically adjusts ModSecurity rules based on feedback.
+   - State: current rule settings; Actions: rule modifications; Reward: reduction in attack count.
+
+6. Ensemble Methods:
+   - Combine results from multiple models to improve attack detection accuracy.
+
+7. Autoencoders:
+   - Use for compressing request data and detecting anomalies in the compressed space.
+
+8. Recurrent Neural Networks:
+   - Analyze sequences of requests to identify complex attack patterns.
+
+9. Natural Language Processing:
+   - Apply NLP methods to analyze REQUEST_URI and User-Agent fields.
+
+10. Graph Neural Networks:
+    - Model relationships between requests and IP addresses as a graph to detect sophisticated attacks.
+
+11. Online Learning:
+    - Use algorithms capable of learning in real-time to adapt to new types of attacks.
+
+12. Generative Adversarial Networks (GANs):
+    - Generate synthetic attack examples to improve detection.
+
+13. Transfer Learning:
+    - Use pre-trained models on large web attack datasets and fine-tune them on your data.
+
+14. Active Learning:
+    - Select the most informative examples for expert labeling and model retraining.
+
+15. Multi-task Learning:
+    - Train a model to simultaneously classify attack type and assess its severity.
+
+To implement these approaches, you can use machine learning libraries such as scikit-learn, TensorFlow, or PyTorch, integrating them with the ModSecurity log processing system and decision-making mechanisms for updating firewall rules and settings.
