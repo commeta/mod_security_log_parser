@@ -123,6 +123,7 @@ inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; d
 		# Очистка лога после обработки файла
 		current_timestamp=$(date +%s)
 		
+		# flow condenser
 		if [[ $old_timestamp -ne $current_timestamp ]]; then
 			threshold_timestamp=$((current_timestamp - TIMEOUT))
 			
