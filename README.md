@@ -426,6 +426,8 @@ It's important to note that these rules should be applied carefully and regularl
 
 #### Protection Methods Using Machine Learning
 
+![ml](ml.png)
+
 1. Anomaly Detection:
    - Use algorithms like Isolation Forest or One-Class SVM to identify anomalous requests.
    - Features: Score, SQLi, XSS, request frequency from REMOTE_ADDR, time between requests.
