@@ -388,44 +388,49 @@ findtime = 600
 
 #### Примеры блокировки или лимитирования на уровне iptables
 
-1. Блокировка по IP-адресу (REMOTE_ADDR):
-   - Если определенный IP-адрес генерирует большое количество запросов или подозрительную активность, его можно заблокировать:
+1. Блокировка новых соединений от конкретного IP-адреса:
+
      ```
-     iptables -A INPUT -s [REMOTE_ADDR] -j DROP
+     iptables -A INPUT -p tcp --syn -s [REMOTE_ADDR] -j DROP
+     ```
+     
+2. Ограничение скорости новых соединений (Rate Limiting):
+
+     ```
+    iptables -A INPUT -p tcp --syn -m limit --limit 10/minute --limit-burst 5 -j ACCEPT
+    iptables -A INPUT -p tcp --syn -j DROP
+     ```
+Это правило позволяет не более 10 новых соединений в минуту с возможностью краткосрочного всплеска до 5 соединений.
+
+3. Замедление новых соединений:
+
+     ```
+    iptables -A INPUT -p tcp --syn -m hashlimit --hashlimit-above 5/min --hashlimit-burst 10 --hashlimit-mode srcip --hashlimit-name conn_rate_limit -j ACCEPT
+    iptables -A INPUT -p tcp --syn -j DROP
      ```
 
-2. Ограничение скорости запросов (Rate Limiting):
-   - Используйте поля REQUEST_METHOD, REQUEST_URI и REMOTE_ADDR для ограничения количества запросов с одного IP-адреса:
+Это правило ограничивает количество новых соединений до 5 в минуту для каждого IP-адреса, с возможностью краткосрочного всплеска до 10 соединений.
+
+
+4. Блокировка новых соединений на основе Score:
      ```
-     iptables -A INPUT -p tcp --dport 80 -m recent --name HTTP --set
-     iptables -A INPUT -p tcp --dport 80 -m recent --name HTTP --update --seconds 60 --hitcount 100 -j DROP
+    # Пример скрипта, который читает логи и блокирует новые соединения при высоком Score
+    if [[ $Score -gt 50 ]]; then
+        iptables -A INPUT -p tcp --syn -s $REMOTE_ADDR -j DROP
+    fi
+     ```
+     
+5. Временная блокировка новых соединений при обнаружении SQL-инъекций или XSS:
+
+     ```
+    if [[ $SQLi -gt 0 || $XSS -gt 0 ]]; then
+        iptables -A INPUT -p tcp --syn -s $REMOTE_ADDR -j DROP
+        # Удалить правило через 10 минут
+        (sleep 600; iptables -D INPUT -p tcp --syn -s $REMOTE_ADDR -j DROP) &
+    fi
      ```
 
-3. Блокировка на основе Score:
-   - Если Score превышает определенный порог, можно заблокировать IP-адрес:
-     ```
-     # Пример скрипта, который читает логи и блокирует IP при высоком Score
-     if [[ $Score -gt 50 ]]; then
-         iptables -A INPUT -s $REMOTE_ADDR -j DROP
-     fi
-     ```
-
-4. Защита от SQL-инъекций и XSS:
-   - Если поля SQLi или XSS имеют ненулевые значения, можно временно заблокировать IP:
-     ```
-     if [[ $SQLi -gt 0 || $XSS -gt 0 ]]; then
-         iptables -A INPUT -s $REMOTE_ADDR -j DROP
-     fi
-     ```
-
-5. Блокировка на основе severity:
-   - Если severity высокий (например, CRITICAL или EMERGENCY), можно немедленно заблокировать IP:
-     ```
-     if [[ "$severity" == "CRITICAL" || "$severity" == "EMERGENCY" ]]; then
-         iptables -A INPUT -s $REMOTE_ADDR -j DROP
-     fi
-     ```
-
+Эти правила будут влиять только на пакеты, инициирующие новые соединения, не затрагивая уже установленные соединения. Это может быть полезно для предотвращения атак, не нарушая при этом работу легитимных пользователей, уже подключенных к системе.
 
 Важно отметить, что эти правила должны применяться осторожно и регулярно пересматриваться, чтобы избежать блокировки легитимного трафика. Также рекомендуется использовать  системы анализа и защиты, такие как fail2ban или собственные скрипты, которые могут анализировать логи ModSecurity в реальном времени и динамически обновлять правила iptables.
 
