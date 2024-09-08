@@ -5,7 +5,20 @@ These scripts analyze ModSecurity logs in SecAuditLogType Concurrent mode within
 
 [На Русском](README_RU.md)
 
-## Description of the mod_sec_log_parser.py Script
+## Overview
+- [Description of the mod_sec_log_parser.py Script](#Description-of-the mod_sec_log_parser-Script)
+- [Description of ModSecurity Audit Log Fields Extracted by the Script](#Description-of-ModSecurity-Audit-Log-Fields-Extracted-by-the-Script)
+- [Description of the Mutex Parameter in Apache Configuration](#Description-of-the-Mutex-Parameter-in-Apache-Configuration)
+- [Description of the watch_dir.sh Script](#Description-of-the-watch_dir-Script)
+- [Description of the modsec_recedive.sh script blocking DDoS attack](#Description-of-the-modsec_recedive-script-blocking-DDoS-attack)
+- [Example of using Fail2ban](#Example-of-using-Fail2ban)
+- [Web Server Security System](#Web-Server-Security-System)
+- [Protection Methods Using Data from ModSecurity Logs](#Protection-Methods-Using-Data-from-ModSecurity-Logs)
+- [Examples of blocking or limiting at the iptables level](#Examples-of-blocking-or-limiting-at-the-iptables-level)
+
+
+
+### Description of the mod_sec_log_parser Script
 This script is designed to process and analyze logs created by the ModSecurity module on an Apache web server in Concurrent SecAuditLogType mode. It automatically extracts key data from the logs, which are stored as separate small files, combines them into a single log file, and records the information in a MySQL database for convenient analysis and reporting. The script also cleans up processed files and empty directories, maintaining an organized file structure.
 
 The scripts address issues related to using global mutexes with the Apache2 MPM ITK module. [issues/454](https://github.com/owasp-modsecurity/ModSecurity/issues/454), [issues/712](https://github.com/owasp-modsecurity/ModSecurity/issues/712)
@@ -156,7 +169,7 @@ The mutex also plays an important role in handling ModSecurity logs:
 Thus, using the Mutex parameter in Apache configuration for ModSecurity helps ensure stability and integrity of server operation in a multithreaded environment, as well as correctness in log management.
 
 
-### Description of the watch_dir.sh Script
+### Description of the watch_dir Script
 
 This script is designed to monitor and manage access permissions for directories where logs created by the ModSecurity module on the Apache web server are stored. In Concurrent SecAuditLogType mode, the ModSecurity module creates log files with permissions set by the user assigned to the Apache 2 process through the AssignUserId directive using the MPM ITK module.
 
@@ -175,7 +188,7 @@ This script is designed to monitor and manage access permissions for directories
 This script ensures security and access management for directories, simplifying the handling of ModSecurity logs, making it an ideal tool for web server administrators.
 
 
-### Description of the modsec_recedive.sh script - blocking DDoS attack
+### Description of the modsec_recedive script blocking DDoS attack
 ![htop](htop.png)
 
 #### Description:
@@ -288,7 +301,7 @@ Make sure to review and adjust the permissions according to your security polici
 
 This provides good performance for frequently used files.
 
-#### Protection Methods Using Data from ModSecurity 2.9 Logs
+#### Protection Methods Using Data from ModSecurity Logs
 
 1. Dynamic blacklists in the database:
    - Create a table in the DB to store suspicious IP addresses.
