@@ -382,45 +382,50 @@ This provides good performance for frequently used files.
 
 These approaches allow you to create a multi-layered, adaptive protection system that leverages the advantages of ModSecurity, databases, and iptables, providing flexible and effective protection against various types of attacks, including DDoS.
 
+
 #### Examples of blocking or limiting at the iptables level
 
-1. Blocking by IP address (REMOTE_ADDR):
-   - If a specific IP address generates a large number of requests or suspicious activity, it can be blocked:
-     ```
-     iptables -A INPUT -s [REMOTE_ADDR] -j DROP
-     ```
 
-2. Request rate limiting:
-   - Use REQUEST_METHOD, REQUEST_URI, and REMOTE_ADDR fields to limit the number of requests from a single IP address:
-     ```
-     iptables -A INPUT -p tcp –dport 80 -m recent –name HTTP –set
-     iptables -A INPUT -p tcp –dport 80 -m recent –name HTTP –update –seconds 60 –hitcount 100 -j DROP
-     ```
 
-3. Blocking based on Score:
-   - If the Score exceeds a certain threshold, you can block the IP address:
-     ```
-     # Example script that reads logs and blocks IP when Score is high
-     if [[ $Score -gt 50 ]]; then
-         iptables -A INPUT -s $REMOTE_ADDR -j DROP
-     fi
-     ```
+1. Blocking new connections from a specific IP address:
+```
+iptables -A INPUT -p tcp --syn -s [REMOTE_ADDR] -j DROP
+```
 
-4. Protection against SQL injections and XSS:
-   - If SQLi or XSS fields have non-zero values, you can temporarily block the IP:
-     ```
-     if [[ $SQLi -gt 0 || $XSS -gt 0 ]]; then
-         iptables -A INPUT -s $REMOTE_ADDR -j DROP
-     fi
-     ```
+2. Limiting the rate of new connections (Rate Limiting):
+```
+iptables -A INPUT -p tcp --syn -m limit --limit 10/minute --limit-burst 15 -j ACCEPT
+iptables -A INPUT -p tcp --syn -j DROP
+```
 
-5. Blocking based on severity:
-   - If severity is high (e.g., CRITICAL or EMERGENCY), you can immediately block the IP:
-     ```
-     if [[ "$severity" == "CRITICAL" || "$severity" == "EMERGENCY" ]]; then
-         iptables -A INPUT -s $REMOTE_ADDR -j DROP
-     fi
-     ```
+This rule allows no more than 10 new connections per minute with the possibility of a short-term burst of up to 15 connections.
+
+3. Slowing down new connections:
+```
+iptables -A INPUT -p tcp --syn -m hashlimit --hashlimit-above 5/min --hashlimit-burst 10 --hashlimit-mode srcip --hashlimit-name conn_rate_limit -j ACCEPT
+iptables -A INPUT -p tcp --syn -j DROP
+```
+
+This rule limits the number of new connections to 5 per minute for each IP address, with the possibility of a short-term burst of up to 10 connections.
+
+4. Blocking new connections based on Score:
+```
+# Example script that reads logs and blocks new connections when Score is high
+if [[ $Score -gt 50 ]]; then
+    iptables -A INPUT -p tcp --syn -s $REMOTE_ADDR -j DROP
+fi
+```
+
+5. Temporary blocking of new connections when SQL injections or XSS are detected:
+```
+if [[ $SQLi -gt 0 || $XSS -gt 0 ]]; then
+    iptables -A INPUT -p tcp --syn -s $REMOTE_ADDR -j DROP
+    # Remove the rule after 10 minutes
+    (sleep 600; iptables -D INPUT -p tcp --syn -s $REMOTE_ADDR -j DROP) &
+fi
+```
+
+These rules will only affect packets initiating new connections, without impacting already established connections. This can be useful for preventing attacks without disrupting the work of legitimate users already connected to the system.
 
 It's important to note that these rules should be applied carefully and regularly reviewed to avoid blocking legitimate traffic. It's also recommended to use analysis and protection systems such as fail2ban or custom scripts that can analyze ModSecurity logs in real-time and dynamically update iptables rules.
 
