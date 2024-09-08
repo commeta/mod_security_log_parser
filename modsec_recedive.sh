@@ -137,6 +137,11 @@ inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; d
 			done < "$LOG_FILE"   
 			
 			old_timestamp=$current_timestamp
+   			
+      			# Не чаще раза в 5 секунд запуск парсера   
+			if [[ $((current_timestamp % 5)) -eq 0 ]]; then
+			    /opt/mod_sec_log_parser.py &
+			fi
 		fi
 	else
 		chmod 770 "$line"
