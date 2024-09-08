@@ -260,3 +260,108 @@ The following directives are crucial for the proper functioning of the ModSecuri
 ### Important Note:
 Make sure to review and adjust the permissions according to your security policies. While 0777 allows for flexibility in concurrent logging, it may introduce security risks if not monitored properly.
 
+## Web Server Security System
+![schema](shema.png)
+
+- Request - entry point for incoming requests into the system.
+- ModSecurity - first level of protection through which incoming traffic passes.
+- Data Base - interacts with ModSecurity and the log analyzer.
+- LOG Analyzer - receives data from the database and sends information to iptables.
+- iptables - receives data from the log analyzer and database to configure filtering rules.
+- Web server - final point for processing requests.
+
+### Advantages of using a file as a simple database:
+
+1. Simplicity of implementation - no separate DBMS required
+2. Low overhead for read/write operations
+3. Ease of backup - just copying the file
+4. Ability to use standard Linux utilities for processing (grep, sed, awk)
+
+###▎File caching in Linux:
+
+1. When reading a file, data enters the page cache (part of "dirty" memory)
+2. Subsequent read operations are served from the cache, which speeds up access
+3. When writing, data first enters the cache and then is asynchronously written to disk
+4. Linux tries to use free memory for caching to speed up file operations
+5. "Dirty" pages (modified but not written to disk) are periodically synchronized
+
+This provides good performance for frequently used files, as in the case of the file "database" in your script.
+
+### Protection Methods Using Data from ModSecurity 2.9 Logs
+
+1. Dynamic blacklists in the database:
+   - Create a table in the DB to store suspicious IP addresses.
+   - When a certain Score threshold or request frequency is exceeded, add the IP to the blacklist.
+   - Periodically synchronize this list with iptables rules.
+
+2. Adaptive ModSecurity rules:
+   - Store additional rules in the DB.
+   - Based on log analysis (e.g., frequent triggers of certain ruleIds), dynamically activate or deactivate rules.
+   - Use scripts to automatically update ModSecurity configuration.
+
+3. Temporary blocks with escalation:
+   - Implement a system of temporary blocks in the DB.
+   - Block the IP for a short period on the first violation, increasing the blocking time for repeated violations.
+   - Synchronize these blocks with iptables.
+
+4. Request pattern analysis:
+   - Save the history of REQUEST_URI and REQUEST_METHOD for each IP in the DB.
+   - Identify suspicious patterns (e.g., systematic scanning).
+   - Apply stricter ModSecurity rules or block via iptables when anomalies are detected.
+
+5. Distributed protection:
+   - Use a distributed DB to exchange information between multiple servers.
+   - Synchronize data about attacks and suspicious activity.
+   - Apply common protection rules across all servers.
+
+6. Intelligent rate limiting:
+   - Store request history for each IP in the DB.
+   - Dynamically adjust limits based on User-Agent, historical behavior, and current load.
+   - Implement this through a combination of ModSecurity rules and iptables.
+
+7. Header anomaly analysis:
+   - Create profiles of normal headers for different client types in the DB.
+   - Compare incoming headers with these profiles.
+   - Increase Score or apply additional checks when anomalies are detected.
+
+8. Geolocation filtering:
+   - Store IP address geolocation information in the DB.
+   - Configure ModSecurity rules to apply different levels of checks depending on the country of origin of the request.
+   - Use iptables to block traffic from high-risk countries.
+
+9. Action sequence analysis:
+   - Save user action sequences in the DB (based on unique_id).
+   - Identify atypical sequences that may indicate automated attacks.
+   - Apply additional checks or blocks when anomalies are detected.
+
+10. Reputation system:
+    - Create a reputation system in the DB for IP addresses and User-Agents.
+    - Consider request history, rule triggers, and successful attacks.
+    - Use this reputation to configure the level of checks in ModSecurity and iptables rules.
+
+11. Request payload analysis:
+    - Store hashes or signatures of suspicious payloads from the data field in the DB.
+    - Use this information to create dynamic ModSecurity rules.
+    - Immediately block the source via iptables when known malicious patterns are detected.
+
+12. Temporal analysis:
+    - Store request statistics by time of day and day of week in the DB.
+    - Identify anomalous activity spikes.
+    - Automatically tighten ModSecurity and iptables rules during high-risk periods.
+
+13. Integration with external data sources:
+    - Periodically update the local DB with data from external sources about known threats.
+    - Use this information to update ModSecurity and iptables rules.
+
+14. Analysis of successful vs. unsuccessful request ratios:
+    - Track the ratio of requests with different response codes for each IP in the DB.
+    - Identify IP addresses with an abnormally high percentage of errors.
+    - Apply additional checks or restrictions to such addresses.
+
+15. Adaptive severity adjustment:
+    - Analyze the effectiveness of rules with different severity levels.
+    - Dynamically adjust severity levels based on the current situation and historical data.
+    - Use this information to prioritize event processing and configure automatic responses.
+
+
+These approaches allow you to create a multi-layered, adaptive protection system that leverages the advantages of ModSecurity, databases, and iptables, providing flexible and effective protection against various types of attacks, including DDoS.
