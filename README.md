@@ -277,7 +277,7 @@ Make sure to review and adjust the permissions according to your security polici
 3. Ease of backup - just copying the file
 4. Ability to use standard Linux utilities for processing (grep, sed, awk)
 
-###▎File caching in Linux:
+### File caching in Linux:
 
 1. When reading a file, data enters the page cache (part of "dirty" memory)
 2. Subsequent read operations are served from the cache, which speeds up access
