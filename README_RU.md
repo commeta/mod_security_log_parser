@@ -397,10 +397,10 @@ findtime = 600
 2. Ограничение скорости новых соединений (Rate Limiting):
 
      ```
-    iptables -A INPUT -p tcp --syn -m limit --limit 10/minute --limit-burst 5 -j ACCEPT
+    iptables -A INPUT -p tcp --syn -m limit --limit 10/minute --limit-burst 15 -j ACCEPT
     iptables -A INPUT -p tcp --syn -j DROP
      ```
-Это правило позволяет не более 10 новых соединений в минуту с возможностью краткосрочного всплеска до 5 соединений.
+Это правило позволяет не более 10 новых соединений в минуту с возможностью краткосрочного всплеска до 15 соединений.
 
 3. Замедление новых соединений:
 
