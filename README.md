@@ -16,7 +16,7 @@ These scripts analyze ModSecurity logs in SecAuditLogType Concurrent mode within
 - [Web Server Security System](#Web-Server-Security-System)
 - [Protection Methods Using Data from ModSecurity Logs](#Protection-Methods-Using-Data-from-ModSecurity-Logs)
 - [Examples of blocking or limiting at the iptables level](#Examples-of-blocking-or-limiting-at-the-iptables-level)
-- [Protection Methods Using Machine Learning](Protection-Methods-Using-Machine-Learning)
+- [Protection Methods Using Machine Learning](#Protection-Methods-Using-Machine-Learning)
 
 
 ### Description of the mod_sec_log_parser Script
