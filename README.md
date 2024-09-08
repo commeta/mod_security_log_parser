@@ -285,7 +285,7 @@ Make sure to review and adjust the permissions according to your security polici
 4. Linux tries to use free memory for caching to speed up file operations
 5. "Dirty" pages (modified but not written to disk) are periodically synchronized
 
-This provides good performance for frequently used files, as in the case of the file "database" in your script.
+This provides good performance for frequently used files.
 
 ### Protection Methods Using Data from ModSecurity 2.9 Logs
 
