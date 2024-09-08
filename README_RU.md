@@ -530,7 +530,7 @@ HAVING request_count > 100;
 ```
 SELECT User_Agent, COUNT(*) as ua_count
 FROM modsec_logs
-WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)
+WHERE created_at > FROM_UNIXTIME(UNIX_TIMESTAMP(NOW()) - 86400)
 GROUP BY User_Agent
 HAVING ua_count > 1000
 ORDER BY ua_count DESC;
@@ -541,7 +541,7 @@ ORDER BY ua_count DESC;
 ```
 SELECT REMOTE_ADDR, AVG(Score) as avg_score
 FROM modsec_logs
-WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)
+WHERE created_at > FROM_UNIXTIME(UNIX_TIMESTAMP(NOW()) - 3600)
 GROUP BY REMOTE_ADDR
 HAVING avg_score > 50;
 ```
@@ -551,7 +551,7 @@ HAVING avg_score > 50;
 ```
 SELECT REMOTE_ADDR, SUM(SQLi) as total_sqli, SUM(XSS) as total_xss
 FROM modsec_logs
-WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)
+WHERE created_at > FROM_UNIXTIME(UNIX_TIMESTAMP(NOW()) - 86400)
 GROUP BY REMOTE_ADDR
 HAVING total_sqli > 10 OR total_xss > 10;
 ```
@@ -561,7 +561,7 @@ HAVING total_sqli > 10 OR total_xss > 10;
 ```
 SELECT REQUEST_METHOD, COUNT(*) as method_count
 FROM modsec_logs
-WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)
+WHERE created_at > FROM_UNIXTIME(UNIX_TIMESTAMP(NOW()) - 3600)
 GROUP BY REQUEST_METHOD
 ORDER BY method_count DESC;
 ```
