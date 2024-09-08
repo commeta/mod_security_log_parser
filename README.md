@@ -7,7 +7,6 @@ These scripts analyze ModSecurity logs in SecAuditLogType Concurrent mode within
 
 ## Overview
 
-- [Description of the mod_sec_log_parser.py Script](#Description-of-the mod_sec_log_parser-Script)
 - [Description of ModSecurity Audit Log Fields Extracted by the Script](#Description-of-ModSecurity-Audit-Log-Fields-Extracted-by-the-Script)
 - [Description of the Mutex Parameter in Apache Configuration](#Description-of-the-Mutex-Parameter-in-Apache-Configuration)
 - [Description of the watch_dir.sh Script](#Description-of-the-watch_dir-Script)
