@@ -7,8 +7,8 @@
 
 ## Оглавление
 
-- [Описание скрипта mod_sec_log_parser.py](#описание-скрипта-mod_sec_log_parser.py)
-- [Описание значений полей лог-файла ModSecurity Audit Log, которые извлекаются скриптом](#Описание-значений-полей-лог-файла-ModSecurity-Audit-Log,-которые-извлекаются-скриптом)
+- [Описание скрипта mod_sec_log_parser.py](#Описание-скрипта-mod_sec_log_parser.py)
+- [Описание значений полей лог-файла ModSecurity Audit Log, которые извлекаются скриптом](#Описание-значений-полей-лог-файла-ModSecurity-Audit-Log-которые-извлекаются-скриптом)
 - [Описание параметра Mutex в конфигурации Apache](#Описание-параметра-Mutex-в-конфигурации-Apache)
 - [Описание скрипта watch_dir.sh](#Описание-скрипта-watch_dir.sh)
 - [Описание скрипта modsec_recedive.sh - блокировка DDoS атак](#Описание-скрипта-modsec_recedive.sh---блокировка-DDoS-атак)
@@ -68,7 +68,7 @@
 
 
 
-### Описание значений полей лог-файла ModSecurity Audit Log, которые извлекаются скриптом:
+### Описание значений полей лог-файла ModSecurity Audit Log которые извлекаются скриптом:
 ![phpmyadmin](phpmyadmin.png)
 
 1. REQUEST_METHOD - HTTP-метод запроса (например, GET, POST, PUT, DELETE).
