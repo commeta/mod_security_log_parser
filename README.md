@@ -31,7 +31,7 @@ The scripts address issues related to using global mutexes with the Apache2 MPM 
 
 6. **File and Directory Cleanup**: After successful log processing, the script deletes the logs to avoid reprocessing during the next run. It also checks for and removes empty subdirectories, helping to maintain a clean and organized file structure.
 
-### Principles of Operation
+#### Principles of Operation
 
 - **Regular Expressions**: Regular expressions are used for parsing logs, clearly defining the data formats to search for, ensuring accurate information extraction.
 
@@ -46,13 +46,13 @@ The script requires the pymysql library to interact with the MySQL database. Mak
 `pip install pymysql`
 
 
-### Settings
+#### Settings
 
 Before running the script, ensure that:
 - The database connection settings (default is localhost) are correct, and the user has the appropriate permissions to access the modsec_logs database.
 - The encoding of the log files (the script uses latin-1) matches the actual encoding. If you are working with logs of a different encoding, make sure it is specified correctly.
 
-### Description of ModSecurity Audit Log Fields Extracted by the Script:
+#### Description of ModSecurity Audit Log Fields Extracted by the Script:
 ![phpmyadmin](phpmyadmin.png)
 
 1. **REQUEST_METHOD** - The HTTP request method (e.g., GET, POST, PUT, DELETE).
@@ -93,7 +93,7 @@ Before running the script, ensure that:
 
 19. **created_at** - The date and time when the ModSecurity rule was triggered in ISO 8601 format.
 
-#### Example ModSecurity Log:
+##### Example ModSecurity Log:
 ```
 --f3c9d4c6-B--
 GET /some/resource HTTP/1.1
@@ -106,7 +106,7 @@ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 HTTP/1.1 403 Forbidden
 ```
 
-##### In this example:
+###### In this example:
 
 - REQUEST_METHOD - GET
 - REQUEST_URI - /some/resource
@@ -117,22 +117,22 @@ HTTP/1.1 403 Forbidden
 - severity - WARNING
 - responce_header - HTTP/1.1 403 Forbidden
 
-##### Important:
+###### Important:
 
 - The exact fields that will be logged may vary depending on the ModSecurity configuration and the version of Apache.
 - Pay attention to Apache-Error messages, as they may indicate issues with the Apache or ModSecurity configuration.
 - Use this data for analyzing and debugging the security of your web application.
 
-## Description of the Mutex Parameter in Apache Configuration
+### Description of the Mutex Parameter in Apache Configuration
 
 The Mutex parameter in Apache configuration is used to manage access to resources in a multithreaded environment. It helps avoid race conditions and ensures safe access to shared resources among different processes or threads.
 
-### Syntax
+#### Syntax
 `Mutex file:/var/run/mod_security default`
 
 This line specifies the use of a file mutex, which will be stored in the directory /var/run/mod_security/. It is important that this directory exists and has the correct permissions, as it will be used to create the mutex file.
 
-### Permissions
+#### Permissions
 Since the mutex is a global resource, the directory where the mutex file is created must have permissions that allow all necessary processes (such as the web server and modules) to interact with it. This means that the permissions on the directory should be set so that all users who need to use this mutex can read, write, and search.
 
 Example command to set permissions:
@@ -143,12 +143,12 @@ chown <owner>:<group> /var/run/mod_security
 
 Replace <owner> and <group> with the appropriate values for your environment. In this example, the directory for the mutex must be accessible for reading, writing, and searching for the owner and group to which the Apache 2 users belong, as assigned via AssignUserId in MPM ITK.
 
-### How Mutex Works
+#### How Mutex Works
 1. **Creating the Mutex**: Upon starting Apache, the ModSecurity module creates a mutex file in the specified directory. This file serves as an indicator that the resource is occupied.
 2. **Locking Resources**: When one of the processes or threads attempts to access a resource (e.g., ModSecurity rule configuration), it refers to this mutex. If another process is already using this resource, the current process will be blocked until the resource becomes available.
 3. **Releasing the Mutex**: After finishing work with the resource, the process releases the mutex, allowing other processes to continue execution.
 
-### Involvement in ModSecurity Logs
+#### Involvement in ModSecurity Logs
 The mutex also plays an important role in handling ModSecurity logs:
 - **Synchronizing Entries**: When multiple Apache processes handle requests simultaneously, they may attempt to write logs to the same file. The mutex ensures synchronization of these operations, preventing data corruption in logs due to concurrent writing.
 - **Preventing Conflicts**: Without using a mutex, situations may arise where one process can overwrite data that another process is trying to write, leading to information loss or incorrect entries.
@@ -156,11 +156,11 @@ The mutex also plays an important role in handling ModSecurity logs:
 Thus, using the Mutex parameter in Apache configuration for ModSecurity helps ensure stability and integrity of server operation in a multithreaded environment, as well as correctness in log management.
 
 
-## Description of the watch_dir.sh Script
+### Description of the watch_dir.sh Script
 
 This script is designed to monitor and manage access permissions for directories where logs created by the ModSecurity module on the Apache web server are stored. In Concurrent SecAuditLogType mode, the ModSecurity module creates log files with permissions set by the user assigned to the Apache 2 process through the AssignUserId directive using the MPM ITK module.
 
-### Key Functions of the Script:
+#### Key Functions of the Script:
 
 - **Directory Monitoring**: The script uses inotifywait to continuously monitor the specified directory (/var/log/httpd/modsec_audit/) for new files or subdirectories.
 
@@ -175,19 +175,19 @@ This script is designed to monitor and manage access permissions for directories
 This script ensures security and access management for directories, simplifying the handling of ModSecurity logs, making it an ideal tool for web server administrators.
 
 
-## Description of the modsec_recedive.sh script - blocking DDoS attack
+### Description of the modsec_recedive.sh script - blocking DDoS attack
 ![htop](htop.png)
 
-### Description:
+#### Description:
 
 This script (modsec_recedive.sh) is designed to monitor ModSecurity logs and block IP addresses that make repeated attacks.
-### Architecture:
+#### Architecture:
 
 - ModSecurity: An Apache module that analyzes incoming traffic and blocks malicious requests.
 - ModSec Recedive: A script that analyzes ModSecurity logs, determines the frequency of attacks from a specific IP address, and blocks IP addresses that exceed a set threshold.
 - Fail2ban: A program that uses rules to block IP addresses that make repeated attacks on a specific service.
 
-### How to use:
+#### How to use:
 
 - ModSecurity configuration: Make sure that ModSecurity is installed and configured to write logs to the “/var/log/httpd/modsec_audit/” directory.
 - Script installation: Save the modsec_recedive.sh script to the desired location.
@@ -200,7 +200,7 @@ This script (modsec_recedive.sh) is designed to monitor ModSecurity logs and blo
 - Running the script: Run the script: ./modsec_recedive.sh.
 - Fail2ban configuration (optional): Create a Fail2ban rule file that will use information from RECEDIVE_FILE to block IP addresses.
 
-### Example of using Fail2ban:
+#### Example of using Fail2ban:
 
 ```
 [ModSec Recedive]
@@ -213,18 +213,18 @@ bantime  = 3600
 findtime = 600
 ```
 
-### Advantages:
+#### Advantages:
 
 - Reduced false positives: Monitoring the number of attacks from a single IP address reduces false positives and blocks only truly malicious actions.
 - More effective protection: Blocking IP addresses that make repeated attacks reduces the load on the server and increases the level of protection.
 - Flexible configuration: You can easily configure the script settings to suit the needs of your system.
 
 
-## ModSecurity Configuration Directives
+### ModSecurity Configuration Directives
 
 The following directives are crucial for the proper functioning of the ModSecurity module on your Apache web server. These settings ensure that the audit logging system operates effectively, especially in Concurrent SecAuditLogType mode.
 
-### Configuration Directives:
+#### Configuration Directives:
 
 <IfModule mod_security2.c>
     # This directive specifies the type of audit log.
@@ -245,7 +245,7 @@ The following directives are crucial for the proper functioning of the ModSecuri
 </IfModule>
 
 
-### Explanation of Directives:
+#### Explanation of Directives:
 
 - **SecAuditLogType Concurrent**: This directive sets the audit log type to Concurrent, allowing multiple processes to write logs simultaneously without conflicts.
 
@@ -257,10 +257,10 @@ The following directives are crucial for the proper functioning of the ModSecuri
 
 - **SecAuditLogStorageDir**: This defines the directory where the audit logs will be stored. Ensure that this directory has the correct permissions set for proper logging.
 
-### Important Note:
+#### Important Note:
 Make sure to review and adjust the permissions according to your security policies. While 0777 allows for flexibility in concurrent logging, it may introduce security risks if not monitored properly.
 
-## Web Server Security System
+### Web Server Security System
 
 ![schema](shema.png)
 
@@ -271,14 +271,14 @@ Make sure to review and adjust the permissions according to your security polici
 - iptables - receives data from the log analyzer and database to filtering rules.
 - Web server - final point for processing requests.
 
-### Advantages of using a file as a simple database:
+#### Advantages of using a file as a simple database:
 
 1. Simplicity of implementation - no separate DBMS required
 2. Low overhead for read/write operations
 3. Ease of backup - just copying the file
 4. Ability to use standard Linux utilities for processing (grep, sed, awk)
 
-### File caching in Linux:
+#### File caching in Linux:
 
 1. When reading a file, data enters the page cache (part of "dirty" memory)
 2. Subsequent read operations are served from the cache, which speeds up access
@@ -288,7 +288,7 @@ Make sure to review and adjust the permissions according to your security polici
 
 This provides good performance for frequently used files.
 
-### Protection Methods Using Data from ModSecurity 2.9 Logs
+#### Protection Methods Using Data from ModSecurity 2.9 Logs
 
 1. Dynamic blacklists in the database:
    - Create a table in the DB to store suspicious IP addresses.
@@ -367,7 +367,7 @@ This provides good performance for frequently used files.
 
 These approaches allow you to create a multi-layered, adaptive protection system that leverages the advantages of ModSecurity, databases, and iptables, providing flexible and effective protection against various types of attacks, including DDoS.
 
-### Examples of blocking or limiting at the iptables level
+#### Examples of blocking or limiting at the iptables level
 
 1. Blocking by IP address (REMOTE_ADDR):
    - If a specific IP address generates a large number of requests or suspicious activity, it can be blocked:
