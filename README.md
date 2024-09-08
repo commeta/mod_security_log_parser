@@ -17,6 +17,7 @@ These scripts analyze ModSecurity logs in SecAuditLogType Concurrent mode within
 - [Protection Methods Using Data from ModSecurity Logs](#Protection-Methods-Using-Data-from-ModSecurity-Logs)
 - [Examples of blocking or limiting at the iptables level](#Examples-of-blocking-or-limiting-at-the-iptables-level)
 - [Protection Methods Using Machine Learning](#Protection-Methods-Using-Machine-Learning)
+- [Comprehensive attack protection system](#Comprehensive-attack-protection-system)
 
 
 ### Description of the mod_sec_log_parser Script
@@ -495,3 +496,81 @@ It's important to note that these rules should be applied carefully and regularl
     - Train a model to simultaneously classify attack type and assess its severity.
 
 To implement these approaches, you can use machine learning libraries such as scikit-learn, TensorFlow, or PyTorch, integrating them with the ModSecurity log processing system and decision-making mechanisms for updating firewall rules and settings.
+
+
+#### Comprehensive attack protection system
+
+##### Detecting anomalous behavior:
+```
+SELECT REMOTE_ADDR, COUNT(*) as request_count
+FROM modsec_logs
+WHERE created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+GROUP BY REMOTE_ADDR
+HAVING request_count > 100;
+```
+This query identifies IP addresses that have made more than 100 requests in the last 5 minutes, which may indicate a DDoS attack.
+
+##### Analysis of suspicious User-Agents:
+```
+SELECT User_Agent, COUNT(*) as ua_count
+FROM modsec_logs
+WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)
+GROUP BY User_Agent
+HAVING ua_count > 1000
+ORDER BY ua_count DESC;
+```
+This query helps identify suspicious User-Agents that make too many requests.
+
+##### Monitoring high Scores:
+```
+SELECT REMOTE_ADDR, AVG(Score) as avg_score
+FROM modsec_logs
+WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)
+GROUP BY REMOTE_ADDR
+HAVING avg_score > 50;
+```
+This query identifies IP addresses with a high average Score, which may indicate malicious activity.
+
+##### Tracking SQL injections and XSS attacks:
+```
+SELECT REMOTE_ADDR, SUM(SQLi) as total_sqli, SUM(XSS) as total_xss
+FROM modsec_logs
+WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)
+GROUP BY REMOTE_ADDR
+HAVING total_sqli > 10 OR total_xss > 10;
+```
+This query identifies IP addresses with a high number of SQL injection or XSS attack attempts.
+
+##### Analysis of request frequency by methods:
+```
+SELECT REQUEST_METHOD, COUNT(*) as method_count
+FROM modsec_logs
+WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)
+GROUP BY REQUEST_METHOD
+ORDER BY method_count DESC;
+```
+This query helps identify abnormal use of certain HTTP methods.
+
+General strategies and approaches:
+
+- Using machine learning to create models of normal behavior and detect anomalies.
+
+- Creating time series for analyzing trends and seasonality in log data.
+
+- Applying clustering to group similar requests and identify potential attacks.
+
+- Using iptables to automatically block IP addresses identified as malicious based on log analysis.
+
+- Dynamically updating ModSecurity rules based on analysis results.
+
+- Creating a reputation system for IP addresses and User-Agents based on historical data.
+
+- Using time windows of different durations to analyze short-term and long-term patterns.
+
+- Combining various metrics (Score, SQLi, XSS, request frequency) to create a comprehensive risk assessment.
+
+- Analyzing correlations between different fields to identify complex attack patterns.
+
+- Creating an alert system based on threshold values of various metrics.
+
+These approaches can be implemented by combining SQL queries to the MySQL database, ModSecurity rules, iptables settings, and machine learning algorithms to create a comprehensive attack protection system.
