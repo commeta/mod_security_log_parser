@@ -504,7 +504,7 @@ To implement these approaches, you can use machine learning libraries such as sc
 ```
 SELECT REMOTE_ADDR, COUNT(*) as request_count
 FROM modsec_logs
-WHERE created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+WHERE created_at > FROM_UNIXTIME(UNIX_TIMESTAMP(NOW()) - 300)
 GROUP BY REMOTE_ADDR
 HAVING request_count > 100;
 ```
@@ -514,7 +514,7 @@ This query identifies IP addresses that have made more than 100 requests in the 
 ```
 SELECT User_Agent, COUNT(*) as ua_count
 FROM modsec_logs
-WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)
+WHERE created_at > FROM_UNIXTIME(UNIX_TIMESTAMP(NOW()) - 86400)
 GROUP BY User_Agent
 HAVING ua_count > 1000
 ORDER BY ua_count DESC;
@@ -525,7 +525,7 @@ This query helps identify suspicious User-Agents that make too many requests.
 ```
 SELECT REMOTE_ADDR, AVG(Score) as avg_score
 FROM modsec_logs
-WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)
+WHERE created_at > FROM_UNIXTIME(UNIX_TIMESTAMP(NOW()) - 3600)
 GROUP BY REMOTE_ADDR
 HAVING avg_score > 50;
 ```
@@ -535,7 +535,7 @@ This query identifies IP addresses with a high average Score, which may indicate
 ```
 SELECT REMOTE_ADDR, SUM(SQLi) as total_sqli, SUM(XSS) as total_xss
 FROM modsec_logs
-WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)
+WHERE created_at > FROM_UNIXTIME(UNIX_TIMESTAMP(NOW()) - 86400)
 GROUP BY REMOTE_ADDR
 HAVING total_sqli > 10 OR total_xss > 10;
 ```
@@ -545,7 +545,7 @@ This query identifies IP addresses with a high number of SQL injection or XSS at
 ```
 SELECT REQUEST_METHOD, COUNT(*) as method_count
 FROM modsec_logs
-WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)
+WHERE created_at > FROM_UNIXTIME(UNIX_TIMESTAMP(NOW()) - 3600)
 GROUP BY REQUEST_METHOD
 ORDER BY method_count DESC;
 ```
