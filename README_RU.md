@@ -520,7 +520,7 @@ findtime = 600
 ```
 SELECT REMOTE_ADDR, COUNT(*) as request_count
 FROM modsec_logs
-WHERE created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+WHERE created_at > FROM_UNIXTIME(UNIX_TIMESTAMP(NOW()) - 300)
 GROUP BY REMOTE_ADDR
 HAVING request_count > 100;
 ```
