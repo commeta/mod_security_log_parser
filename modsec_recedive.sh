@@ -9,7 +9,6 @@ PID_FILE="/var/run/modsec_recedive.pid"
 ATTACK_THRESHOLD=10  # Number of attacks before logging to recedive file
 old_timestamp=0
 last_run_timestamp=0
-old_hour=0
 
 # Check for running instances
 check_running() {
@@ -144,16 +143,7 @@ inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; d
 			# Не чаще раза в 5 секунд запуск парсера 
 			if [[ $((current_timestamp - last_run_timestamp)) -ge 5 ]]; then
 			    last_run_timestamp=$current_timestamp
-			    
-			    current_hour=$(date +%H)
-       
-			    # 1 раз в час режим c обслуживанием
-			    if [[ $old_hour -ne $current_hour ]]; then
-				old_hour=$current_hour
-				/root/mod_sec_log_parser.py &
-			    else
-				/root/mod_sec_log_parser.py -k &
-			    fi
+			    /root/mod_sec_log_parser.py &
 			fi
 		fi
 	else
