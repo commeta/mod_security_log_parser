@@ -137,12 +137,23 @@ def main():
             insert_into_db(connection, parsed_data)
             os.remove(file_path)
         
-        if not keep_dirs:
+    # Очистка пустых подкаталогов в отдельном цикле
+    if not keep_dirs:
+        dirs_with_times = []
+        for root, dirs, files in os.walk(WATCH_DIR, topdown=False):
             for dir in dirs:
                 dir_path = os.path.join(root, dir)
-                
                 if not os.listdir(dir_path):
-                    os.rmdir(dir_path)
+                    creation_time = os.path.getctime(dir_path)
+                    dirs_with_times.append((dir_path, creation_time))
+
+                    # Сортировка директорий по времени создания (от старых к новым)
+                    dirs_with_times.sort(key=lambda x: x[1])
+
+                    # Удаление всех пустых директорий, кроме последней
+                    for dir_path, _ in dirs_with_times[:-1]:
+                        os.rmdir(dir_path)
+
         
     if connection.open:
         connection.close()
