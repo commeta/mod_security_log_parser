@@ -23,6 +23,7 @@ MA 02110-1301, USA.
 
 import os
 import re
+import sys
 import pymysql
 import time
 from pymysql import MySQLError
@@ -122,6 +123,8 @@ def insert_into_db(connection, data):
     connection.commit()
 
 def main():
+    keep_dirs = '-k' in sys.argv
+
     connection = connect_to_db()
     if not connection:
         return
@@ -134,28 +137,29 @@ def main():
             insert_into_db(connection, parsed_data)
             os.remove(file_path)
 
-    # Находим самый новый пустой подкаталог
-    newest_empty_dir = None
-    newest_time = 0
+    if not keep_dirs:
+	    # Находим самый новый пустой подкаталог
+        newest_empty_dir = None
+        newest_time = 0
 
-    for root, dirs, files in os.walk(WATCH_DIR, topdown=False):
-        for dir in dirs:
-            dir_path = os.path.join(root, dir)
-            if not os.listdir(dir_path):
-                creation_time = os.path.getctime(dir_path)
-                if creation_time > newest_time:
-                    newest_time = creation_time
-                    newest_empty_dir = dir_path
+        for root, dirs, files in os.walk(WATCH_DIR, topdown=False):
+            for dir in dirs:
+                dir_path = os.path.join(root, dir)
+                if not os.listdir(dir_path):
+                    creation_time = os.path.getctime(dir_path)
+                    if creation_time > newest_time:
+                        newest_time = creation_time
+                        newest_empty_dir = dir_path
 
-    # Удаление пустых каталогов, кроме самого нового
-    for root, dirs, files in os.walk(WATCH_DIR, topdown=False):
-        for dir in dirs:
-            dir_path = os.path.join(root, dir)
-            if not os.listdir(dir_path) and dir_path != newest_empty_dir:
-                try:
-                    os.rmdir(dir_path)
-                except OSError:
-                    pass
+        # Удаление пустых каталогов, кроме самого нового
+        for root, dirs, files in os.walk(WATCH_DIR, topdown=False):
+            for dir in dirs:
+                dir_path = os.path.join(root, dir)
+                if not os.listdir(dir_path) and dir_path != newest_empty_dir:
+                    try:
+                        os.rmdir(dir_path)
+                    except OSError:
+                        pass
 
     if connection.open:
         connection.close()
