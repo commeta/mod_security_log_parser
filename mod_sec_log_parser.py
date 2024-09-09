@@ -23,8 +23,8 @@ MA 02110-1301, USA.
 
 import os
 import re
-import sys
 import pymysql
+import time
 from pymysql import MySQLError
 from datetime import datetime
 
@@ -121,14 +121,11 @@ def insert_into_db(connection, data):
     ))
     connection.commit()
 
-
 def main():
-    keep_dirs = '-k' in sys.argv
-
     connection = connect_to_db()
     if not connection:
         return
-    
+
 
     for root, dirs, files in os.walk(WATCH_DIR, topdown=False):
         for file in files:
@@ -136,25 +133,26 @@ def main():
             parsed_data = parse_log_file(file_path)
             insert_into_db(connection, parsed_data)
             os.remove(file_path)
-        
-    # Очистка пустых подкаталогов в отдельном цикле
-    if not keep_dirs:
-        dirs_with_times = []
-        for root, dirs, files in os.walk(WATCH_DIR, topdown=False):
-            for dir in dirs:
-                dir_path = os.path.join(root, dir)
-                if not os.listdir(dir_path):
-                    creation_time = os.path.getctime(dir_path)
-                    dirs_with_times.append((dir_path, creation_time))
 
-                    # Сортировка директорий по времени создания (от старых к новым)
-                    dirs_with_times.sort(key=lambda x: x[1])
+    dirs_with_times = []
+    for root, dirs, files in os.walk(WATCH_DIR, topdown=False):
+        for dir in dirs:
+            dir_path = os.path.join(root, dir)
+            if not os.listdir(dir_path):
+                creation_time = os.path.getctime(dir_path)
+                dirs_with_times.append((dir_path, creation_time))
 
-                    # Удаление всех пустых директорий, кроме последней
-                    for dir_path, _ in dirs_with_times[:-1]:
-                        os.rmdir(dir_path)
+    # Сортировка директорий по времени создания (от старых к новым)
+    dirs_with_times.sort(key=lambda x: x[1])
 
-        
+    # Удаление всех пустых директорий, кроме последней
+    for dir_path, _ in dirs_with_times[:-1]:
+        if os.path.exists(dir_path) and os.path.isdir(dir_path):
+            try:
+                os.rmdir(dir_path)
+            except OSError as e:
+                pass
+
     if connection.open:
         connection.close()
 
