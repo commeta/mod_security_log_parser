@@ -9,6 +9,7 @@ PID_FILE="/var/run/modsec_recedive.pid"
 ATTACK_THRESHOLD=10  # Number of attacks before logging to recedive file
 old_timestamp=0
 last_run_timestamp=0
+old_minute=0
 
 # Check for running instances
 check_running() {
@@ -136,14 +137,23 @@ inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; d
 					# Удаляем строку из файла
 					sed -i "/^$line$/d" "$LOG_FILE"
 				fi
-			done < "$LOG_FILE"   
+			done < "$LOG_FILE"
 			
 			old_timestamp=$current_timestamp
    			
 			# Не чаще раза в 5 секунд запуск парсера 
 			if [[ $((current_timestamp - last_run_timestamp)) -ge 5 ]]; then
 			    last_run_timestamp=$current_timestamp
-			    /root/mod_sec_log_parser.py &
+			    
+			    current_minute=$(date +%H)
+
+			    # 1 раз в минуту режим c обслуживанием
+			    if [[ $old_minute -ne $current_minute ]]; then
+				old_minute=$current_minute
+				/root/mod_sec_log_parser.py &
+			    else
+				/root/mod_sec_log_parser.py -k &
+			    fi
 			fi
 		fi
 	else
