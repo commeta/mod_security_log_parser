@@ -389,21 +389,21 @@ These approaches allow you to create a multi-layered, adaptive protection system
 
 1. Blocking new connections from a specific IP address:
 ```
-iptables -A INPUT -p tcp --syn -s [REMOTE_ADDR] -j DROP
+iptables -A INPUT -p tcp -m state --state NEW -s [REMOTE_ADDR] -j DROP
 ```
 
 2. Limiting the rate of new connections (Rate Limiting):
 ```
-iptables -A INPUT -p tcp --syn -m limit --limit 10/minute --limit-burst 15 -j ACCEPT
-iptables -A INPUT -p tcp --syn -j DROP
+iptables -A INPUT -p tcp -m state --state NEW -m limit --limit 10/minute --limit-burst 15 -j ACCEPT
+iptables -A INPUT -p tcp -m state --state NEW -j DROP
 ```
 
 This rule allows no more than 10 new connections per minute with the possibility of a short-term burst of up to 15 connections.
 
 3. Slowing down new connections:
 ```
-iptables -A INPUT -p tcp --syn -m hashlimit --hashlimit-above 5/min --hashlimit-burst 10 --hashlimit-mode srcip --hashlimit-name conn_rate_limit -j ACCEPT
-iptables -A INPUT -p tcp --syn -j DROP
+iptables -A INPUT -p tcp -m state --state NEW -m hashlimit --hashlimit-above 5/min --hashlimit-burst 10 --hashlimit-mode srcip --hashlimit-name conn_rate_limit -j ACCEPT
+iptables -A INPUT -p tcp -m state --state NEW -j DROP
 ```
 
 This rule limits the number of new connections to 5 per minute for each IP address, with the possibility of a short-term burst of up to 10 connections.
@@ -412,16 +412,16 @@ This rule limits the number of new connections to 5 per minute for each IP addre
 ```
 # Example script that reads logs and blocks new connections when Score is high
 if [[ $Score -gt 50 ]]; then
-    iptables -A INPUT -p tcp --syn -s $REMOTE_ADDR -j DROP
+    iptables -A INPUT -p tcp -m state --state NEW -s $REMOTE_ADDR -j DROP
 fi
 ```
 
 5. Temporary blocking of new connections when SQL injections or XSS are detected:
 ```
 if [[ $SQLi -gt 0 || $XSS -gt 0 ]]; then
-    iptables -A INPUT -p tcp --syn -s $REMOTE_ADDR -j DROP
+    iptables -A INPUT -p tcp -m state --state NEW -s $REMOTE_ADDR -j DROP
     # Remove the rule after 10 minutes
-    (sleep 600; iptables -D INPUT -p tcp --syn -s $REMOTE_ADDR -j DROP) &
+    (sleep 600; iptables -D INPUT -p tcp -m state --state NEW -s $REMOTE_ADDR -j DROP) &
 fi
 ```
 
