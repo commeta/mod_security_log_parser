@@ -138,7 +138,7 @@ def main():
             os.remove(file_path)
 
     if not keep_dirs:
-	    # Находим самый новый пустой подкаталог
+	# Находим самый новый пустой подкаталог
         newest_empty_dir = None
         newest_time = 0
 
