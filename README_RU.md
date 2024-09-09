@@ -391,22 +391,22 @@ findtime = 600
 1. Блокировка новых соединений от конкретного IP-адреса:
 
      ```
-     iptables -A INPUT -p tcp --syn -s [REMOTE_ADDR] -j DROP
+     iptables -A INPUT -p tcp -m state --state NEW -s [REMOTE_ADDR] -j DROP
      ```
      
 2. Ограничение скорости новых соединений (Rate Limiting):
 
      ```
-    iptables -A INPUT -p tcp --syn -m limit --limit 10/minute --limit-burst 15 -j ACCEPT
-    iptables -A INPUT -p tcp --syn -j DROP
+    iptables -A INPUT -p tcp -m state --state NEW -m limit --limit 10/minute --limit-burst 15 -j ACCEPT
+    iptables -A INPUT -p tcp -m state --state NEW -j DROP
      ```
 Это правило позволяет не более 10 новых соединений в минуту с возможностью краткосрочного всплеска до 15 соединений.
 
 3. Замедление новых соединений:
 
      ```
-    iptables -A INPUT -p tcp --syn -m hashlimit --hashlimit-above 5/min --hashlimit-burst 10 --hashlimit-mode srcip --hashlimit-name conn_rate_limit -j ACCEPT
-    iptables -A INPUT -p tcp --syn -j DROP
+    iptables -A INPUT -p tcp -m state --state NEW -m hashlimit --hashlimit-above 5/min --hashlimit-burst 10 --hashlimit-mode srcip --hashlimit-name conn_rate_limit -j ACCEPT
+    iptables -A INPUT -p tcp -m state --state NEW -j DROP
      ```
 
 Это правило ограничивает количество новых соединений до 5 в минуту для каждого IP-адреса, с возможностью краткосрочного всплеска до 10 соединений.
@@ -416,7 +416,7 @@ findtime = 600
      ```
     # Пример скрипта, который читает логи и блокирует новые соединения при высоком Score
     if [[ $Score -gt 50 ]]; then
-        iptables -A INPUT -p tcp --syn -s $REMOTE_ADDR -j DROP
+        iptables -A INPUT -p tcp -m state --state NEW -s $REMOTE_ADDR -j DROP
     fi
      ```
      
@@ -424,9 +424,9 @@ findtime = 600
 
      ```
     if [[ $SQLi -gt 0 || $XSS -gt 0 ]]; then
-        iptables -A INPUT -p tcp --syn -s $REMOTE_ADDR -j DROP
+        iptables -A INPUT -p tcp -m state --state NEW -s $REMOTE_ADDR -j DROP
         # Удалить правило через 10 минут
-        (sleep 600; iptables -D INPUT -p tcp --syn -s $REMOTE_ADDR -j DROP) &
+        (sleep 600; iptables -D INPUT -p tcp -m state --state NEW -s $REMOTE_ADDR -j DROP) &
     fi
      ```
 
