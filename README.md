@@ -191,7 +191,13 @@ This script ensures security and access management for directories, simplifying 
 
 
 ### Description of the modsec_recedive script blocking DDoS attack
+
 ![htop](htop.png)
+
+Start in background mode:
+```
+nohup /root/modsec_recedive.sh &
+```
 
 #### Description:
 
