@@ -19,17 +19,16 @@ These scripts analyze ModSecurity logs in SecAuditLogType Concurrent mode within
 - [Protection Methods Using Machine Learning](#Protection-Methods-Using-Machine-Learning)
 - [Comprehensive attack protection system](#Comprehensive-attack-protection-system)
 
-
-### Description of the mod_sec_log_parser Script
-This script is designed to process and analyze logs created by the ModSecurity module on an Apache web server in Concurrent SecAuditLogType mode. It automatically extracts key data from the logs, which are stored as separate small files, combines them into a single log file, and records the information in a MySQL database for convenient analysis and reporting. The script also cleans up processed files and empty directories, maintaining an organized file structure.
-
 The scripts address issues related to using global mutexes with the Apache2 MPM ITK module. [issues/454](https://github.com/owasp-modsecurity/ModSecurity/issues/454), [issues/712](https://github.com/owasp-modsecurity/ModSecurity/issues/712)
-
-
 
 [ModSecurity Handbook: Getting Started: Chapter 4. Logging](https://www.feistyduck.com/library/modsecurity-handbook-free/online/ch04-logging.html)
 
 [owasp-modsecurity / ModSecurity Reference Manual (v2.x)](https://github.com/owasp-modsecurity/ModSecurity/wiki/Reference-Manual-(v2.x))
+
+
+
+### Description of the mod_sec_log_parser Script
+This script is designed to process and analyze logs created by the ModSecurity module on an Apache web server in Concurrent SecAuditLogType mode. It automatically extracts key data from the logs, which are stored as separate small files, combines them into a single log file, and records the information in a MySQL database for convenient analysis and reporting. The script also cleans up processed files and empty directories, maintaining an organized file structure.
 
 
 ### Key Functions and Tasks of the Script:
