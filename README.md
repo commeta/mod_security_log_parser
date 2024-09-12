@@ -243,7 +243,7 @@ Create a custom filter file for Fail2Ban. This file will tell Fail2Ban how to pa
 
 2. Define the Filter:
 
-   Add the following content to the modsec_recedive.conf file. This regex pattern will extract the IP addresses from your log format:
+   Add the following content to the modsec_recedive.conf file. This regex pattern will extract the IP addresses:
 
    ```
    [Definition]
@@ -251,7 +251,6 @@ Create a custom filter file for Fail2Ban. This file will tell Fail2Ban how to pa
    ignoreregex =
    ```
 
-   This regex pattern assumes your log format is consistent with the example you provided.
 
 ##### Step 2: Configure the Jail
 
