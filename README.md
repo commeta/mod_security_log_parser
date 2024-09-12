@@ -233,16 +233,6 @@ To set up Fail2Ban to block IP addresses based on entries in your custom ModSecu
 
 Create a custom filter file for Fail2Ban. This file will tell Fail2Ban how to parse your log file.
 
-1. Create the Filter File:
-
-   You can create a new filter file named modsec_recedive.conf in the /etc/fail2ban/filter.d/ directory:
-
-   ```
-   sudo nano /etc/fail2ban/filter.d/modsec_recedive.conf
-   ```
-
-2. Define the Filter:
-
    Add the following content to the modsec_recedive.conf file. This regex pattern will extract the IP addresses:
 
    ```
@@ -257,16 +247,6 @@ Create a custom filter file for Fail2Ban. This file will tell Fail2Ban how to pa
 
 Now, you need to configure a jail for this filter in Fail2Ban.
 
-1. Edit the Jail Configuration:
-
-   Open the Fail2Ban jail configuration file. You can either edit the main configuration file or create a separate local configuration file:
-
-   ```
-   sudo nano /etc/fail2ban/jail.local
-   ```
-
-2. Add the Jail Configuration:
-
    Add the following configuration for your custom jail:
 
    ```
@@ -279,22 +259,6 @@ Now, you need to configure a jail for this filter in Fail2Ban.
    bantime  = 3600
    findtime = 600
    ```
-
-##### Step 3: Restart Fail2Ban
-
-After setting up the filter and jail, restart Fail2Ban to apply the changes:
-```
-sudo systemctl restart fail2ban
-```
-
-##### Step 4: Verify Configuration
-
-You can verify that your configuration is working by checking the status of Fail2Ban and ensuring that the jail is active:
-```
-sudo fail2ban-client status modsec-recedive
-```
-
-This command should show you the current status of the jail, including any IPs that have been banned.
 
 ##### Additional Notes
 
