@@ -147,7 +147,7 @@ inotifywait -m -r -e create --format '%w%f' "$WATCH_DIR" | while read -r line; d
 			    
 			    current_minute=$(date +%H)
 
-			    # 1 раз в минуту режим c обслуживанием
+			    # 1 раз в час режим c обслуживанием
 			    if [[ $old_minute -ne $current_minute ]]; then
 				old_minute=$current_minute
 				/root/mod_sec_log_parser.py &
