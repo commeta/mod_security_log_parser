@@ -21,6 +21,14 @@ These scripts analyze ModSecurity logs in SecAuditLogType Concurrent mode within
 
 The scripts address issues related to using global mutexes with the Apache2 MPM ITK module. [issues/454](https://github.com/owasp-modsecurity/ModSecurity/issues/454), [issues/712](https://github.com/owasp-modsecurity/ModSecurity/issues/712)
 
+> Note: Testing was conducted in a production environment.  
+```
+Producer: ModSecurity for Apache/2.9.2 (http://www.modsecurity.org/); OWASP_CRS/2.2.9.  
+Server: Apache/2.4.6 (CentOS 7) mpm-itk/2.4.7-04; 1 Core, 2.4GHz, 1GB RAM.
+```
+The project architecture is tailored to the environment; in alternative configurations, issues with using a global mutex do not occur.
+
+
 [ModSecurity Handbook: Getting Started: Chapter 4. Logging](https://www.feistyduck.com/library/modsecurity-handbook-free/online/ch04-logging.html)
 
 [owasp-modsecurity / ModSecurity Reference Manual (v2.x)](https://github.com/owasp-modsecurity/ModSecurity/wiki/Reference-Manual-(v2.x))
