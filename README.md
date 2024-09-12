@@ -190,8 +190,6 @@ This script is designed to monitor and manage access permissions for directories
 
 - **Process Management**: The script checks if it is already running using a PID file, preventing multiple instances from being executed simultaneously.
 
-- **Logging**: The script logs its activities to a log file (/var/log/httpd/watch_dir.log), recording the processing of new subdirectories.
-
 - **Resource Cleanup**: In case of interruption (e.g., SIGINT or SIGTERM), the script correctly terminates and removes the PID file.
 
 This script ensures security and access management for directories, simplifying the handling of ModSecurity logs, making it an ideal tool for web server administrators.
@@ -229,17 +227,84 @@ This script (modsec_recedive.sh) is designed to monitor ModSecurity logs and blo
 - Fail2ban configuration (optional): Create a Fail2ban rule file that will use information from RECEDIVE_FILE to block IP addresses.
 
 #### Example of using Fail2ban:
+To set up Fail2Ban to block IP addresses based on entries in your custom ModSecurity log file (/var/log/httpd/modsec_recedive.log), you'll need to create a custom filter and configure a jail in Fail2Ban. Here's how you can do it:
 
+##### Step 1: Create a Custom Filter
+
+Create a custom filter file for Fail2Ban. This file will tell Fail2Ban how to parse your log file.
+
+1. Create the Filter File:
+
+   You can create a new filter file named modsec_recedive.conf in the /etc/fail2ban/filter.d/ directory:
+
+   ```
+   sudo nano /etc/fail2ban/filter.d/modsec_recedive.conf
+   ```
+
+2. Define the Filter:
+
+   Add the following content to the modsec_recedive.conf file. This regex pattern will extract the IP addresses from your log format:
+
+   ```
+   [Definition]
+   failregex = ^<HOST> - \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}
+   ignoreregex =
+   ```
+
+   This regex pattern assumes your log format is consistent with the example you provided.
+
+##### Step 2: Configure the Jail
+
+Now, you need to configure a jail for this filter in Fail2Ban.
+
+1. Edit the Jail Configuration:
+
+   Open the Fail2Ban jail configuration file. You can either edit the main configuration file or create a separate local configuration file:
+
+   ```
+   sudo nano /etc/fail2ban/jail.local
+   ```
+
+2. Add the Jail Configuration:
+
+   Add the following configuration for your custom jail:
+
+   ```
+   [modsec-recedive]
+   enabled  = true
+   port     = http,https
+   filter   = modsec_recedive
+   logpath  = /var/log/httpd/modsec_recedive.log
+   maxretry = 3
+   bantime  = 3600
+   findtime = 600
+   ```
+
+##### Step 3: Restart Fail2Ban
+
+After setting up the filter and jail, restart Fail2Ban to apply the changes:
 ```
-[ModSec Recedive]
-enabled  = true
-port  = http,https
-filter   = modsec_recedive
-logpath  = /var/log/httpd/modsec_recedive.log
-maxretry = 3
-bantime  = 3600
-findtime = 600
+sudo systemctl restart fail2ban
 ```
+
+##### Step 4: Verify Configuration
+
+You can verify that your configuration is working by checking the status of Fail2Ban and ensuring that the jail is active:
+```
+sudo fail2ban-client status modsec-recedive
+```
+
+This command should show you the current status of the jail, including any IPs that have been banned.
+
+##### Additional Notes
+
+- Ensure that the log file /var/log/httpd/modsec_recedive.log is being updated correctly by ModSecurity.
+- Make sure that Fail2Ban has the necessary permissions to read the log file.
+- Test your regex pattern with sample log entries to ensure it matches correctly.
+- Adjust maxretry, bantime, and findtime values according to your security policy needs.
+
+By following these steps, you should be able to configure Fail2Ban to monitor your custom ModSecurity log and block IPs that appear too frequently.
+
 
 #### Advantages:
 
