@@ -19,7 +19,21 @@
 - [Методы защиты от атак с использованием машинного обучения](#Методы-защиты-от-атак-с-использованием-машинного-обучения)
 - [Комплексная система защиты от атак](#Комплексная-система-защиты-от-атак)
 
+
+
 Скрипты решают проблемы с использованием глобального мьютекста с модулем Apache2 MPM ITK [issues/454](https://github.com/owasp-modsecurity/ModSecurity/issues/454), [issues/712](https://github.com/owasp-modsecurity/ModSecurity/issues/712)
+
+> Примечание: тестирование проводилось в продакшн среде
+```
+Producer: ModSecurity for Apache/2.9.2 (http://www.modsecurity.org/); OWASP_CRS/2.2.9.
+Server: Apache/2.4.6 (CentOS 7) mpm-itk/2.4.7-04; 1 Core, 2.4GHz, 1Gb RAM.
+```
+
+Архитектура проекта подобрана под окружение, в альтернативных конфигурациях проблем с использованием глобального мьютекса не возникает. 
+
+
+
+
 
 
 [ModSecurity Handbook: Getting Started: Chapter 4. Logging](https://www.feistyduck.com/library/modsecurity-handbook-free/online/ch04-logging.html)
