@@ -2,11 +2,11 @@
 
 # Set variables
 WATCH_DIR="/var/log/httpd/modsec_audit/"
-LOG_FILE="/var/lib/modsecurity_recedive/modsec_recedive.dat" 
-RECEDIVE_FILE="/var/log/httpd/modsec_recedive.log"
+LOG_FILE="/var/lib/modsecurity_recidive/modsec_recidive.dat" 
+recidive_FILE="/var/log/httpd/modsec_recidive.log"
 TIMEOUT=60  # minute in seconds
-PID_FILE="/var/run/modsec_recedive.pid"
-ATTACK_THRESHOLD=10  # Number of attacks before logging to recedive file
+PID_FILE="/var/run/modsec_recidive.pid"
+ATTACK_THRESHOLD=10  # Number of attacks before logging to recidive file
 old_timestamp=0
 last_run_timestamp=0
 old_minute=0
@@ -61,8 +61,8 @@ if [ ! -f "$LOG_FILE" ]; then
 	touch "$LOG_FILE"
 fi
 
-if [ ! -f "$RECEDIVE_FILE" ]; then
-	touch "$RECEDIVE_FILE"
+if [ ! -f "$recidive_FILE" ]; then
+	touch "$recidive_FILE"
 fi
 
 # Analyze ModSecurity audit log files
@@ -94,7 +94,7 @@ analyze_log_file() {
 				sed -i "s/^$ip_address .*/$ip_address $error_count $timestamp/" "$LOG_FILE"
         
 				if [[ $error_count -eq $ATTACK_THRESHOLD ]]; then 
-					echo "$ip_address - $(date +'%Y-%m-%d %H:%M:%S')" >> "$RECEDIVE_FILE"
+					echo "$ip_address - $(date +'%Y-%m-%d %H:%M:%S')" >> "$recidive_FILE"
 				fi
 			else
 				# Получаем текущий timestamp из файла
@@ -104,7 +104,7 @@ analyze_log_file() {
 				sed -i "s/^$ip_address .*/$ip_address $error_count $timestamp/" "$LOG_FILE"
         
 				if [[ $((error_count % ATTACK_THRESHOLD)) -eq 0 ]]; then 
-					echo "$ip_address - $(date +'%Y-%m-%d %H:%M:%S')" >> "$RECEDIVE_FILE"
+					echo "$ip_address - $(date +'%Y-%m-%d %H:%M:%S')" >> "$recidive_FILE"
 				fi        
 			fi	
 		else
