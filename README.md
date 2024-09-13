@@ -11,7 +11,7 @@ These scripts analyze ModSecurity logs in SecAuditLogType Concurrent mode within
 - [Description of ModSecurity Audit Log Fields Extracted by the Script](#Description-of-ModSecurity-Audit-Log-Fields-Extracted-by-the-Script)
 - [Description of the Mutex Parameter in Apache Configuration](#Description-of-the-Mutex-Parameter-in-Apache-Configuration)
 - [Description of the watch_dir.sh Script](#Description-of-the-watch_dir-Script)
-- [Description of the modsec_recedive.sh script blocking DDoS attack](#Description-of-the-modsec_recedive-script-blocking-DDoS-attack)
+- [Description of the modsec_recidive.sh script blocking DDoS attack](#Description-of-the-modsec_recidive-script-blocking-DDoS-attack)
 - [Example of using Fail2ban](#Example-of-using-Fail2ban)
 - [Web Server Security System](#Web-Server-Security-System)
 - [Protection Methods Using Data from ModSecurity Logs](#Protection-Methods-Using-Data-from-ModSecurity-Logs)
@@ -195,45 +195,45 @@ This script is designed to monitor and manage access permissions for directories
 This script ensures security and access management for directories, simplifying the handling of ModSecurity logs, making it an ideal tool for web server administrators.
 
 
-### Description of the modsec_recedive script blocking DDoS attack
+### Description of the modsec_recidive script blocking DDoS attack
 
 ![htop](htop.png)
 
 Start in background mode:
 ```
-nohup /root/modsec_recedive.sh &
+nohup /root/modsec_recidive.sh &
 ```
 
 #### Description:
 
-This script (modsec_recedive.sh) is designed to monitor ModSecurity logs and block IP addresses that make repeated attacks.
+This script (modsec_recidive.sh) is designed to monitor ModSecurity logs and block IP addresses that make repeated attacks.
 #### Architecture:
 
 - ModSecurity: An Apache module that analyzes incoming traffic and blocks malicious requests.
-- ModSec Recedive: A script that analyzes ModSecurity logs, determines the frequency of attacks from a specific IP address, and blocks IP addresses that exceed a set threshold.
+- ModSec recidive: A script that analyzes ModSecurity logs, determines the frequency of attacks from a specific IP address, and blocks IP addresses that exceed a set threshold.
 - Fail2ban: A program that uses rules to block IP addresses that make repeated attacks on a specific service.
 
 #### How to use:
 
 - ModSecurity configuration: Make sure that ModSecurity is installed and configured to write logs to the “/var/log/httpd/modsec_audit/” directory.
-- Script installation: Save the modsec_recedive.sh script to the desired location.
+- Script installation: Save the modsec_recidive.sh script to the desired location.
 - Parameter configuration:
 - - WATCH_DIR: Path to the directory with ModSecurity logs.
 - - LOG_FILE: Path to the file where information about the number of attacks from each IP is stored.
-- - RECEDIVE_FILE: Path to the file where IP addresses that need to be blocked are stored.
+- - recidive_FILE: Path to the file where IP addresses that need to be blocked are stored.
 - - TIMEOUT: The period of time (in seconds) after which information about attacks from ModSecurity logs is deleted.
-- - ATTACK_THRESHOLD: The number of attacks from a single IP address after which it falls into RECEDIVE_FILE and can be blocked.
-- Running the script: Run the script: ./modsec_recedive.sh.
-- Fail2ban configuration (optional): Create a Fail2ban rule file that will use information from RECEDIVE_FILE to block IP addresses.
+- - ATTACK_THRESHOLD: The number of attacks from a single IP address after which it falls into recidive_FILE and can be blocked.
+- Running the script: Run the script: ./modsec_recidive.sh.
+- Fail2ban configuration (optional): Create a Fail2ban rule file that will use information from recidive_FILE to block IP addresses.
 
 #### Example of using Fail2ban:
-To set up Fail2Ban to block IP addresses based on entries in your custom ModSecurity log file (/var/log/httpd/modsec_recedive.log), you'll need to create a custom filter and configure a jail in Fail2Ban. Here's how you can do it:
+To set up Fail2Ban to block IP addresses based on entries in your custom ModSecurity log file (/var/log/httpd/modsec_recidive.log), you'll need to create a custom filter and configure a jail in Fail2Ban. Here's how you can do it:
 
 ##### Step 1: Create a Custom Filter
 
 Create a custom filter file for Fail2Ban. This file will tell Fail2Ban how to parse your log file.
 
-   Add the following content to the modsec_recedive.conf file. This regex pattern will extract the IP addresses:
+   Add the following content to the modsec_recidive.conf file. This regex pattern will extract the IP addresses:
 
    ```
    [Definition]
@@ -250,11 +250,11 @@ Now, you need to configure a jail for this filter in Fail2Ban.
    Add the following configuration for your custom jail:
 
    ```
-   [modsec-recedive]
+   [modsec-recidive]
    enabled  = true
    port     = http,https
-   filter   = modsec_recedive
-   logpath  = /var/log/httpd/modsec_recedive.log
+   filter   = modsec_recidive
+   logpath  = /var/log/httpd/modsec_recidive.log
    maxretry = 3
    bantime  = 3600
    findtime = 600
@@ -262,7 +262,7 @@ Now, you need to configure a jail for this filter in Fail2Ban.
 
 ##### Additional Notes
 
-- Ensure that the log file /var/log/httpd/modsec_recedive.log is being updated correctly by ModSecurity.
+- Ensure that the log file /var/log/httpd/modsec_recidive.log is being updated correctly by ModSecurity.
 - Make sure that Fail2Ban has the necessary permissions to read the log file.
 - Test your regex pattern with sample log entries to ensure it matches correctly.
 - Adjust maxretry, bantime, and findtime values according to your security policy needs.
