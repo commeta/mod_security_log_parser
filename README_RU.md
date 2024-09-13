@@ -251,9 +251,9 @@ nohup /root/modsec_recidive.sh &
 
    ```
    [Definition]
-   failregex = ^<HOST> - \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$
+   failregex = ^<HOST> - \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}
    ignoreregex =
-   datepattern = ^%%Y-%%m-%%d %%H:%%M:%%S
+   datepattern = ^%%Y-%%m-%%d %%H:%%M:%%S.%%f
    ```
 
 
