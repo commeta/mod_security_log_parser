@@ -237,9 +237,9 @@ Create a custom filter file for Fail2Ban. This file will tell Fail2Ban how to pa
 
    ```
    [Definition]
-   failregex = ^<HOST> - \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$
+   failregex = ^<HOST> - \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}
    ignoreregex =
-   datepattern = ^%%Y-%%m-%%d %%H:%%M:%%S
+   datepattern = ^%%Y-%%m-%%d %%H:%%M:%%S.%%f
    ```
 
 
