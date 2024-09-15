@@ -274,6 +274,36 @@ nohup /root/modsec_recidive.sh &
    findtime = 600
    ```
 
+##### Шаг 3: Тестирование
+
+   ```
+   fail2ban-regex /var/log/httpd/modsec_recidive.log /etc/fail2ban/filter.d/modsec_recidive.conf
+   
+   Running tests
+   =============
+   
+   Use   failregex filter file : modsec_recidive, basedir: /etc/fail2ban
+   Use      datepattern : ^%Y-%m-%d %H:%M:%S.%f : ^Year-Month-Day 24hour:Minute:Second.Microseconds
+   Use         log file : /var/log/httpd/modsec_recedive.log
+   Use         encoding : UTF-8
+   
+   
+   Results
+   =======
+   
+   Failregex: 311 total
+   |-  #) [# of hits] regular expression
+   |   1) [311] ^<HOST> - \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}
+   `-
+   
+   Ignoreregex: 0 total
+   
+   Date template hits:
+   
+   Lines: 312 lines, 0 ignored, 311 matched, 1 missed
+   [processed in 0.06 sec]
+   ```
+
 ##### Дополнительные замечания
 
 - Убедитесь, что файл журнала /var/log/httpd/modsec_recidive.log корректно обновляется ModSecurity.
