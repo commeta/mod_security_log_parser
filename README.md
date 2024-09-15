@@ -5,6 +5,9 @@ These scripts analyze ModSecurity logs in SecAuditLogType Concurrent mode within
 
 [На Русском](README_RU.md)
 
+Read also: [War in the Shadows of the Network: How Your Website Fights Hacker Attacks](https://webdevops.ru/blog/voyna-v-teni-seti-kak-sayt-otbivaet-ataki-hakerov.html)
+
+
 ## Overview
 
 - [Description of the mod_sec_log_parser.py Script](#Description-of-the-mod_sec_log_parser-Script)
