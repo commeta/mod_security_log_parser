@@ -5,6 +5,8 @@
 [English](README.md)
 
 
+Читайте так-же: [Война в Тени Сети: Как Ваш Сайт Отбивает Атаки Хакеров](https://webdevops.ru/blog/voyna-v-teni-seti-kak-sayt-otbivaet-ataki-hakerov.html)
+
 ## Оглавление
 
 - [Описание скрипта mod_sec_log_parser.py](#Описание-скрипта-mod_sec_log_parser)
