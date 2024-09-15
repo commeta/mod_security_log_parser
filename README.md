@@ -273,7 +273,7 @@ Now, you need to configure a jail for this filter in Fail2Ban.
    
    Use   failregex filter file : modsec_recidive, basedir: /etc/fail2ban
    Use      datepattern : ^%Y-%m-%d %H:%M:%S.%f : ^Year-Month-Day 24hour:Minute:Second.Microseconds
-   Use         log file : /var/log/httpd/modsec_recedive.log
+   Use         log file : /var/log/httpd/modsec_recidive.log
    Use         encoding : UTF-8
    
    
@@ -292,6 +292,20 @@ Now, you need to configure a jail for this filter in Fail2Ban.
    Lines: 312 lines, 0 ignored, 311 matched, 1 missed
    [processed in 0.06 sec]
    ```
+
+   ```
+   fail2ban-client status modsec-recidive
+   Status for the jail: modsec-recidive
+   |- Filter
+   |  |- Currently failed:	0
+   |  |- Total failed:	0
+   |  `- File list:	/var/log/httpd/modsec_recidive.log
+   `- Actions
+      |- Currently banned:	0
+      |- Total banned:	0
+      `- Banned IP list:	
+   ```
+
 
 ##### Additional Notes
 
