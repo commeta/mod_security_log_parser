@@ -5,7 +5,11 @@
 [English](README.md)
 
 
-Читайте так-же: [Война в Тени Сети: Как Ваш Сайт Отбивает Атаки Хакеров](https://webdevops.ru/blog/voyna-v-teni-seti-kak-sayt-otbivaet-ataki-hakerov.html)
+Читайте так-же: 
+- [Война в Тени Сети: Как Ваш Сайт Отбивает Атаки Хакеров](https://webdevops.ru/blog/voyna-v-teni-seti-kak-sayt-otbivaet-ataki-hakerov.html)
+
+- [План внедрения превентивных мер защиты коммерческой тайны в организации](/The-plan-for-the-implementation-of-preventive-measures-to-protect-trade-secrets-in-the-organization.md)
+
 
 ## Оглавление
 
@@ -20,7 +24,6 @@
 - [Примеры блокировки или лимитирования на уровне iptables](#Примеры-блокировки-или-лимитирования-на-уровне-iptables)
 - [Методы защиты от атак с использованием машинного обучения](#Методы-защиты-от-атак-с-использованием-машинного-обучения)
 - [Комплексная система защиты от атак](#Комплексная-система-защиты-от-атак)
-- [План внедрения превентивных мер защиты коммерческой тайны в организации](/The-plan-for-the-implementation-of-preventive-measures-to-protect-trade-secrets-in-the-organization.md)
 
 
 
