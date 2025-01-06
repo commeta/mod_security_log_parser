@@ -5,8 +5,11 @@ These scripts analyze ModSecurity logs in SecAuditLogType Concurrent mode within
 
 [На Русском](README_RU.md)
 
-Read also: [War in the Shadows of the Network: How Your Website Fights Hacker Attacks](https://webdevops.ru/blog/voyna-v-teni-seti-kak-sayt-otbivaet-ataki-hakerov.html)
+Read also:
 
+- [War in the Shadows of the Network: How Your Website Fights Hacker Attacks](https://webdevops.ru/blog/voyna-v-teni-seti-kak-sayt-otbivaet-ataki-hakerov.html)
+
+- [The plan for the implementation of preventive measures to protect trade secrets in the organization](/The-plan-for-the-implementation-of-preventive-measures-to-protect-trade-secrets-in-the-organization.md)
 
 ## Overview
 
