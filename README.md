@@ -11,6 +11,8 @@ Read also:
 
 - [The plan for the implementation of preventive measures to protect trade secrets in the organization](/The-plan-for-the-implementation-of-preventive-measures-to-protect-trade-secrets-in-the-organization.md)
 
+- [Analysis of the possibility of using manipulation in financial schemes](/use-of-manipulation-in-financial-schemes.md)
+
 ## Overview
 
 - [Description of the mod_sec_log_parser.py Script](#Description-of-the-mod_sec_log_parser-Script)
