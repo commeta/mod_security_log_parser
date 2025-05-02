@@ -10,6 +10,9 @@
 
 - [План внедрения превентивных мер защиты коммерческой тайны в организации](/The-plan-for-the-implementation-of-preventive-measures-to-protect-trade-secrets-in-the-organization.md)
 
+- [Анализ возможности использования манипуляций в финансовых схемах](/use-of-manipulation-in-financial-schemes.md)
+
+
 
 ## Оглавление
 
